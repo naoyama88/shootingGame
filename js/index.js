@@ -1,10 +1,40 @@
-let LEFT_KEY = 37;
-let UP_KEY = 38;
-let RIGHT_KEY = 39;
-let DOWN_KEY = 40;
-let SPACE_KEY = 32;
-let ENTER_KEY = 13;
-let HERO_MOVEMENT = 10;
+const LEFT_KEY = 37;
+const UP_KEY = 38;
+const RIGHT_KEY = 39;
+const DOWN_KEY = 40;
+const SPACE_KEY = 32;
+const ENTER_KEY = 13;
+const HERO_MOVEMENT = 10;
+
+const INIT_HERO_POSITION_X = 250;
+const INIT_HERO_POSITION_Y = 460;
+const LASER_FROM_X = 0;
+const LASER_FROM_Y = -120;
+const INIT_ENEMY_POSITION_Y = -40;
+
+const HERO_SIZE_X = 20;
+const HERO_SIZE_Y = 20;
+const LASER_SIZE_X = 2;
+const LASER_SIZE_Y = 50;
+const ENEMY_SIZE_X = 35;
+const ENEMY_SIZE_Y = 35;
+
+const SCREEN_LEFT = 20;
+const SCREEN_RIGHT = 480;
+const SCREEN_TOP = 20;
+const SCREEN_BOTTOM = 480;
+
+const FREQUENCY_OF_ENEMY_APPEARANCE_LV01 = 50;
+const FREQUENCY_OF_ENEMY_APPEARANCE_LV02 = 35;
+const FREQUENCY_OF_ENEMY_APPEARANCE_LV03 = 20;
+const FREQUENCY_OF_ENEMY_APPEARANCE_LV04 = 5;
+
+const ITERATIONS_LV01 = 0;
+const ITERATIONS_LV02 = 500;
+const ITERATIONS_LV03 = 1000;
+const ITERATIONS_LV04 = 1500;
+
+const BASIC_SCORE_POINT = 100;
 
 let heroElm = document.getElementById("hero");
 let elemGameOver = document.getElementById("gameover");
@@ -15,11 +45,19 @@ let score = 0;
 let iterations = 0;
 let ended = false;
 
+class ControllerClass {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+let controllerClass = new ControllerClass(INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y);
 let controller = new Object();
 let enemies = new Array();
 
-let hero = createSprite("hero", 250, 460, 20, 20);
-let laser = createSprite("laser", 0, -120, 2, 50);
+let hero = createSprite("hero", INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y, HERO_SIZE_X, HERO_SIZE_Y);
+let laser = createSprite("laser", LASER_FROM_X, LASER_FROM_Y, LASER_SIZE_X, LASER_SIZE_Y);
 
 let intersects = (a, b) => {
     return (
@@ -42,15 +80,12 @@ function toggleKey(keyCode, isPressed) {
     if (keyCode === LEFT_KEY) {
         controller.left = isPressed;
     }
-
     if (keyCode === RIGHT_KEY) {
         controller.right = isPressed;
     }
-
     if (keyCode === UP_KEY) {
         controller.up = isPressed;
     }
-
     if (keyCode === DOWN_KEY) {
         controller.down = isPressed;
     }
@@ -63,17 +98,17 @@ function toggleKey(keyCode, isPressed) {
 }
 
 function ensureBounds(sprite, ignoreY) {
-    if (sprite.x < 20) {
-        sprite.x = 20;
+    if (sprite.x < SCREEN_LEFT) {
+        sprite.x = SCREEN_LEFT;
     }
-    if (!ignoreY && sprite.y < 20) {
-        sprite.y = 20;
+    if (!ignoreY && sprite.y < SCREEN_TOP) {
+        sprite.y = SCREEN_TOP;
     }
-    if (sprite.x + sprite.w > 480) {
-        sprite.x = 480 - sprite.w;
+    if (sprite.x + sprite.w > SCREEN_RIGHT) {
+        sprite.x = SCREEN_RIGHT - sprite.w;
     }
-    if (!ignoreY && sprite.y + sprite.h > 480) {
-        sprite.y = 480 - sprite.h;
+    if (!ignoreY && sprite.y + sprite.h > SCREEN_BOTTOM) {
+        sprite.y = SCREEN_BOTTOM - sprite.h;
     }
 }
 
@@ -116,10 +151,10 @@ function checkCollisions() {
             enemies.splice(i, 1);
             i--;
             laser.y = -laser.h;
-            score += 100;
+            score += BASIC_SCORE_POINT;
         } else if (intersects(hero, enemies[i])) {
             gameOver();
-        } else if (enemies[i].y + enemies[i].h >= 500) {
+        } else if (enemies[i].y + enemies[i].h >= 490) {
             let element = document.getElementById(enemies[i].id);
             element.style.visibility = "hidden";
             element.parentNode.removeChild(element);
@@ -159,18 +194,18 @@ function updatePosition() {
 }
 
 function addEnemy() {
-    let interval = 50;
-    if (iterations > 1500) {
-        interval = 5;
-    } else if (iterations > 1000) {
-        interval = 20;
-    } else if (iterations > 500) {
-        interval = 35;
+    let interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV01;
+    if (iterations > ITERATIONS_LV04) {
+        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV04;
+    } else if (iterations > ITERATIONS_LV03) {
+        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV03;
+    } else if (iterations > ITERATIONS_LV02) {
+        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV02;
     }
 
     if (getRandom(interval) === 0) {
         let elementName = "enemy" + getRandom(10000000);
-        let enemy = createSprite(elementName, getRandom(450), -40, 35, 35);
+        let enemy = createSprite(elementName, getRandom(450), INIT_ENEMY_POSITION_Y, ENEMY_SIZE_X, ENEMY_SIZE_Y);
 
         let element = document.createElement("div");
         element.id = enemy.id;
@@ -214,8 +249,8 @@ document.onkeyup = function(e) {
 function start() {
     console.log("start()");
     ended = false;
-    hero = createSprite("hero", 250, 460, 20, 20);
-    laser = createSprite("laser", 0, -120, 2, 50);
+    hero = createSprite("hero", INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y, HERO_SIZE_X, HERO_SIZE_Y);
+    laser = createSprite("laser", LASER_FROM_X, LASER_FROM_Y, LASER_SIZE_X, LASER_SIZE_Y);
     score = 0;
     for (let i = 0; i < enemies.length; i++) {
         document.getElementById(enemies[i].id).remove();
