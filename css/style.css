@@ -64,7 +64,17 @@
     color: #ff0000;
     font-size: 20px;
     position: absolute;
-    left: 160px;
+    left: 180px;
     top: 200px;
     visibility: hidden;
+}
+
+#restart {
+    color: #000000;
+    font-size: 20px;
+    position: absolute;
+    left: 170px;
+    top: 250px;
+    visibility: hidden;
+    border-radius: 10px;
 }
