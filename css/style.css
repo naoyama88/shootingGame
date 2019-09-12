@@ -22,10 +22,18 @@
 }
 
 #laser {
-    background: #00ff00;
-    width: 2px;
-    height: 50px;
+    background-image: url("../img/laser_01.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 10px;
+    height: 25px;
     position: absolute;
+    overflow: hidden;
+    background-position: 0 0;
+
+    /* for debug */
+    /* background-color: green; */
 }
 
 .enemy {
