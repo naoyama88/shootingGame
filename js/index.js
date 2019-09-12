@@ -230,6 +230,6 @@ function start() {
     iterations = 0;
 }
 
-elmRestart.addEventListener(MouseEvent, start());
+elmRestart.addEventListener("click", start);
 
 loop();
