@@ -1,5 +1,9 @@
 #hero {
-    background: #ff0000;
+    background-image: url("../img/hero_01.png");
+    height: 500px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     width: 20px;
     height: 20px;
     position: absolute;
@@ -21,7 +25,7 @@
     position: absolute;
 }
 
-.enemy { 
+.enemy {
     background: #0000ff;
     width: 35px;
     height: 35px;
