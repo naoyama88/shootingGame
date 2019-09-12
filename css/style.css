@@ -78,3 +78,7 @@
     visibility: hidden;
     border-radius: 10px;
 }
+
+#restart:focus {
+    outline:0;
+}
