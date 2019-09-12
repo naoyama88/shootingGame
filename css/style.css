@@ -62,9 +62,9 @@
 
 #gameover {
     color: #ff0000;
-    font-size: 20px;
+    font-size: 30px;
     position: absolute;
-    left: 180px;
+    left: 150px;
     top: 200px;
     visibility: hidden;
 }
