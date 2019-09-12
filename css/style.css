@@ -29,7 +29,10 @@
 }
 
 .enemy {
-    background: #0000ff;
+    background-image: url("../img/enemy_01.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     width: 35px;
     height: 35px;
     position: absolute;
