@@ -64,54 +64,6 @@ class Controller {
         this.enter = false;
     }
 
-    get left() {
-        return this.left;
-    }
-
-    get right() {
-        return this.right;
-    }
-
-    get up() {
-        return this.up;
-    }
-
-    get down() {
-        return this.down;
-    }
-
-    get space() {
-        return this.space;
-    }
-
-    get enter() {
-        return this.enter;
-    }
-
-    set left(left) {
-        return this.left;
-    }
-
-    set right(right) {
-        this.right = right;
-    }
-
-    set up(up) {
-        this.up = up;
-    }
-
-    set down(down) {
-        this.down = down;
-    }
-
-    set space(space) {
-        this.space = space;
-    }
-
-    set enter(enter) {
-        this.enter = enter;
-    }
-
     toggleKey(keyCode, isPressed) {
         if (keyCode === LEFT_KEY) {
             this.left = isPressed;
