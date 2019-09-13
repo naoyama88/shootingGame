@@ -64,6 +64,7 @@
     position: absolute;
     left: 20px;
     top: 20px;
+    z-index: 2;
 }
 
 #gameover {
@@ -73,6 +74,7 @@
     left: 144px;
     top: 160px;
     visibility: hidden;
+    z-index: 2;
 }
 
 #restart {
@@ -85,6 +87,7 @@
     border-radius: 10px;
     line-height: 40px;
     width: 300px;
+    z-index: 2;
 }
 
 #restart:focus {
