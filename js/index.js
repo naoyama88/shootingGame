@@ -240,7 +240,7 @@ function addEnemy() {
         let element = document.createElement("div");
         element.id = enemy.id;
         element.className = "enemy";
-        document.getElementById('background').appendChild(element);
+        document.getElementById('container').appendChild(element);
 
         enemies[enemies.length] = enemy;
     }

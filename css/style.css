@@ -3,7 +3,7 @@
     font-family: 'VT323', monospace;
 }
 
-#background {
+#container {
     background-image: url("../img/background_01.jpg");
     background-position: center;
     background-repeat: no-repeat;
@@ -92,4 +92,26 @@
 
 #restart:focus {
     outline:0;
+}
+
+#background {
+    background-image: url("../img/background_01.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 500px;
+    height: 1000px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    animation: background-falldown 15s linear 0s infinite normal;
+}
+
+@keyframes background-falldown {
+    0% {
+        top: -500px;
+    }
+    100% {
+        top: 0px;
+    }
 }
