@@ -134,19 +134,19 @@ function setPosition(sprite) {
 }
 
 function handleControls() {
-    if (controller.up) {
+    if (controller.up && !ended) {
         hero.y -= HERO_MOVEMENT;
     }
-    if (controller.down) {
+    if (controller.down && !ended) {
         hero.y += HERO_MOVEMENT;
     }
-    if (controller.left) {
+    if (controller.left && !ended) {
         hero.x -= HERO_MOVEMENT;
     }
-    if (controller.right) {
+    if (controller.right && !ended) {
         hero.x += HERO_MOVEMENT;
     }
-    if (controller.space && laser.y <= -120) {
+    if (controller.space && laser.y <= -120 && !ended) {
         laser.x = hero.x + 6;
         laser.y = hero.y - laser.h;
     }
