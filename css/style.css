@@ -1,5 +1,6 @@
 * {
     cursor: url('../img/pointer.png') 24 24, pointer;
+    font-family: 'VT323', monospace;
 }
 
 #hero {
@@ -66,10 +67,10 @@
 
 #gameover {
     color: #ff0000;
-    font-size: 30px;
+    font-size: 50px;
     position: absolute;
-    left: 150px;
-    top: 200px;
+    left: 144px;
+    top: 160px;
     visibility: hidden;
 }
 
