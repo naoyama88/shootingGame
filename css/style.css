@@ -5,7 +5,7 @@
 }
 
 body * {
-    cursor: url("../img/pointer.png") 24 24, pointer;
+    cursor: url("../img/pointer_01.png") 24 24, pointer;
     font-family: "VT323", monospace;
 }
 
@@ -24,6 +24,7 @@ body * {
     position: absolute;
     left: 0px;
     top: 0px;
+    z-index: -1;
     animation: background-falldown 15s linear 0s infinite normal;
 }
 
@@ -63,24 +64,27 @@ body * {
 #gameover {
     color: #ff0000;
     font-size: 50px;
-    position: absolute;
-    left: 144px;
-    top: 160px;
     visibility: hidden;
     z-index: 2;
+    width: 180px;
+    margin: 0 auto;
+    padding-top: 180px;
 }
 
 #restart {
     color: #000000;
     font-size: 20px;
-    position: absolute;
-    left: 90px;
-    top: 250px;
     visibility: hidden;
     border-radius: 10px;
     line-height: 40px;
     width: 300px;
     z-index: 2;
+    background-color: blue;
+    color: yellow;
+    border: none;
+    position: absolute;
+    left: 100px;
+    margin-top: 5px;
 }
 
 #restart:focus {
