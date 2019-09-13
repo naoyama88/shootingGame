@@ -39,6 +39,7 @@ const BASIC_SCORE_POINT = 100;
 let heroElm = document.getElementById("hero");
 let elemGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
+let scoreElement = document.getElementById("score");
 
 let lastLoopRun = 0;
 let score = 0;
@@ -195,8 +196,9 @@ function showSprites() {
     for (let i = 0; i < enemies.length; i++) {
         setPosition(enemies[i]);
     }
-    let scoreElement = document.getElementById("score");
-    scoreElement.innerHTML = "SCORE: " + score;
+    if (!ended) {
+        scoreElement.innerHTML = "SCORE: " + score;
+    }
 }
 
 function updatePosition() {
