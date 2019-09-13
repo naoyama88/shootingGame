@@ -1,3 +1,5 @@
+"use strict";
+
 const LEFT_KEY = 37;
 const UP_KEY = 38;
 const RIGHT_KEY = 39;
@@ -37,7 +39,7 @@ const ITERATIONS_LV04 = 1500;
 const BASIC_SCORE_POINT = 100;
 
 let heroElm = document.getElementById("hero");
-let elemGameOver = document.getElementById("gameover");
+let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
 let scoreElement = document.getElementById("score");
 
@@ -46,18 +48,93 @@ let score = 0;
 let iterations = 0;
 let ended = false;
 
-class ControllerClass {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
+class Controller {
+    left;
+    right;
+    up;
+    down;
+    space;
+    enter;
+    constructor() {
+        this.left = false;
+        this.right = false;
+        this.up = false;
+        this.down = false;
+        this.space = false;
+        this.enter = false;
+    }
+
+    get left() {
+        return this.left;
+    }
+
+    get right() {
+        return this.right;
+    }
+
+    get up() {
+        return this.up;
+    }
+
+    get down() {
+        return this.down;
+    }
+
+    get space() {
+        return this.space;
+    }
+
+    get enter() {
+        return this.enter;
+    }
+
+    set left(left) {
+        return this.left;
+    }
+
+    set right(right) {
+        this.right = right;
+    }
+
+    set up(up) {
+        this.up = up;
+    }
+
+    set down(down) {
+        this.down = down;
+    }
+
+    set space(space) {
+        this.space = space;
+    }
+
+    set enter(enter) {
+        this.enter = enter;
+    }
+
+    toggleKey(keyCode, isPressed) {
+        if (keyCode === LEFT_KEY) {
+            this.left = isPressed;
+        }
+        if (keyCode === RIGHT_KEY) {
+            this.right = isPressed;
+        }
+        if (keyCode === UP_KEY) {
+            this.up = isPressed;
+        }
+        if (keyCode === DOWN_KEY) {
+            this.down = isPressed;
+        }
+        if (keyCode === SPACE_KEY) {
+            this.space = isPressed;
+        }
+        if (keyCode === ENTER_KEY) {
+            this.enter = isPressed;
+        }
     }
 }
 
-let controllerClass = new ControllerClass(
-    INIT_HERO_POSITION_X,
-    INIT_HERO_POSITION_Y
-);
-let controller = new Object();
+let controller = new Controller();
 let enemies = new Array();
 
 let hero = createSprite(
@@ -92,26 +169,13 @@ function createSprite(id, x, y, w, h) {
     return result;
 }
 
-function toggleKey(keyCode, isPressed) {
-    if (keyCode === LEFT_KEY) {
-        controller.left = isPressed;
-    }
-    if (keyCode === RIGHT_KEY) {
-        controller.right = isPressed;
-    }
-    if (keyCode === UP_KEY) {
-        controller.up = isPressed;
-    }
-    if (keyCode === DOWN_KEY) {
-        controller.down = isPressed;
-    }
-    if (keyCode === SPACE_KEY) {
-        controller.space = isPressed;
-    }
-    if (keyCode === ENTER_KEY) {
-        controller.enter = isPressed;
-    }
-}
+document.onkeydown = function(e) {
+    controller.toggleKey(e.keyCode, true);
+};
+
+document.onkeyup = function(e) {
+    controller.toggleKey(e.keyCode, false);
+};
 
 function ensureBounds(sprite, ignoreY) {
     if (sprite.x < SCREEN_LEFT) {
@@ -148,6 +212,8 @@ function handleControls() {
         hero.x += HERO_MOVEMENT;
     }
     if (controller.space && laser.y <= LASER_FROM_Y && !ended) {
+        // TODO this if statement is the thing that limit laser only one
+        
         /**
          * theory of calculation
          *     laser.x = hero.x + (hero.w / 2) - (laser.w / 2)
@@ -155,7 +221,7 @@ function handleControls() {
          * But actually these thoery doesn't work on practice
          * So use correction value
          */
-        laser.x = hero.x + (hero.w / 2) - (laser.w / 2) - 3; // "-3" is correction value
+        laser.x = hero.x + hero.w / 2 - laser.w / 2 - 3; // "-3" is correction value
         laser.y = hero.y - laser.h + 25; // "+25" is correction value
     }
     if (controller.enter && ended === true) {
@@ -240,7 +306,7 @@ function addEnemy() {
         let element = document.createElement("div");
         element.id = enemy.id;
         element.className = "enemy";
-        document.getElementById('container').appendChild(element);
+        document.getElementById("container").appendChild(element);
 
         enemies[enemies.length] = enemy;
     }
@@ -268,14 +334,6 @@ function loop() {
     setTimeout("loop();", 2);
 }
 
-document.onkeydown = function(e) {
-    toggleKey(e.keyCode, true);
-};
-
-document.onkeyup = function(e) {
-    toggleKey(e.keyCode, false);
-};
-
 function start() {
     console.log("start()");
     ended = false;
@@ -300,11 +358,19 @@ function start() {
     enemies = new Array();
     setPosition(hero);
     setPosition(laser);
-    document.getElementById(hero.id).style.visibility = "visible";
-    elemGameOver.style.visibility = "hidden";
-    elmRestart.style.visibility = "hidden";
+    getVisible(heroElm);
+    getHidden(elmGameOver);
+    getHidden(elmRestart);
 
     iterations = 0;
+}
+
+function getVisible(elm) {
+    elm.style.visibility = "visible";
+}
+
+function getHidden(elm) {
+    elm.style.visibility = "hidden";
 }
 
 elmRestart.addEventListener("click", start);
