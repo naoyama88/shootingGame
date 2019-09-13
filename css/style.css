@@ -36,7 +36,7 @@ body * {
     position: absolute;
 }
 
-#laser {
+.laser {
     background: url("../img/laser_01.png") no-repeat center;
     background-size: cover;
     width: 9px;

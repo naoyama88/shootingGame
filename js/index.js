@@ -43,78 +43,134 @@ let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
 let scoreElement = document.getElementById("score");
 
-let lastLoopRun = 0;
-let score = 0;
-let iterations = 0;
-let ended = false;
+class Game {
+    constructor(controller) {
+        this.controller = controller;
+        this.match = null;
+    }
+
+    start() {
+        let hero = new Sprite(
+            "hero",
+            INIT_HERO_POSITION_X - HERO_SIZE_X / 2,
+            INIT_HERO_POSITION_Y,
+            HERO_SIZE_X,
+            HERO_SIZE_Y
+        );
+        let field = new Field(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM, hero);
+        this.match = new Match(field);
+        loop();
+    }
+
+    handleControls() {
+        if (this.controller.up && !this.match.ended) {
+            this.match.field.hero.y -= HERO_MOVEMENT;
+        }
+        if (this.controller.down && !this.match.ended) {
+            this.match.field.hero.y += HERO_MOVEMENT;
+        }
+        if (this.controller.left && !this.match.ended) {
+            this.match.field.hero.x -= HERO_MOVEMENT;
+        }
+        if (this.controller.right && !this.match.ended) {
+            this.match.field.hero.x += HERO_MOVEMENT;
+        }
+        if (this.controller.space && !this.ended) {
+            this.match.field.newLaser();
+        }
+        if (this.controller.enter && this.ended === true) {
+            this.restart();
+        }
+
+        this.match.field.ensureBounds(hero);
+    }
+
+    gameOver() {
+        this.match.ended = true;
+        let heroElm = document.getElementById(hero.id);
+        heroElm.style.visibility = "hidden";
+        gameOverElm = document.getElementById("gameover");
+        gameOverElm.style.visibility = "visible";
+        restartElm = document.getElementById("restart");
+        restartElm.style.visibility = "visible";
+    }
+
+    restart() {
+        console.log("restart()");
+
+        for (let i = 0; i < this.match.field.enemies.length; i++) {
+            document.getElementById(this.match.field.enemies[i].id).remove();
+        }
+        for (let i = 0; i < this.match.field.lasers.length; i++) {
+            document.getElementById(this.match.field.lasers[i].id).remove();
+        }
+
+        let hero = new Sprite(
+            "hero",
+            INIT_HERO_POSITION_X - HERO_SIZE_X / 2,
+            INIT_HERO_POSITION_Y,
+            HERO_SIZE_X,
+            HERO_SIZE_Y
+        );
+        let field = new Field(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM, hero);
+        this.match = new Match(field);
+        this.match.field.enemies = new Array();
+        this.match.field.lasers = new Array();
+        this.match.field.hero.setPosition();
+        View.setHidden(elmGameOver);
+        View.setHidden(elmRestart);
+
+        this.match.iterations = 0;
+    }
+}
+
+class Match {
+    constructor(field) {
+        this.lastLoopRun = 0;
+        this.iterations = 0;
+        this.field = field;
+        this.ended = false;
+        this.score = 0;
+    }
+
+    showScore() {
+        if (!this.ended) {
+            scoreElement.innerHTML = "SCORE: " + this.score;
+        }
+    }
+}
 
 class Controller {
-    left;
-    right;
-    up;
-    down;
-    space;
-    enter;
-    constructor() {
-        this.left = false;
-        this.right = false;
-        this.up = false;
-        this.down = false;
-        this.space = false;
-        this.enter = false;
-    }
-
-    get left() {
-        return this.left;
-    }
-
-    get right() {
-        return this.right;
-    }
-
-    get up() {
-        return this.up;
-    }
-
-    get down() {
-        return this.down;
-    }
-
-    get space() {
-        return this.space;
-    }
-
-    get enter() {
-        return this.enter;
-    }
-
-    set left(left) {
-        return this.left;
-    }
-
-    set right(right) {
-        this.right = right;
-    }
-
-    set up(up) {
-        this.up = up;
-    }
-
-    set down(down) {
-        this.down = down;
-    }
-
-    set space(space) {
-        this.space = space;
-    }
-
-    set enter(enter) {
-        this.enter = enter;
+    leftKey;
+    rightKey;
+    upKey;
+    downKey;
+    spaceKey;
+    enterKey;
+    left = false;
+    right = false;
+    up = false;
+    down = false;
+    space = false;
+    enter = false;
+    constructor(leftKey, rightKey, upKey, downKey, spaceKey, enterKey) {
+        this.leftKey = leftKey;
+        this.rightKey = rightKey;
+        this.upKey = upKey;
+        this.downKey = downKey;
+        this.spaceKey = spaceKey;
+        this.enterKey = enterKey;
     }
 
     toggleKey(keyCode, isPressed) {
-        if (keyCode === LEFT_KEY) {
-            this.left = isPressed;
+        console.log(keyCode);
+        switch (keyCode) {
+            case LEFT_KEY:
+                this.left = isPressed;
+                break;
+            case RIGHT_KEY:
+                this.right = isPressed;
+                break;
         }
         if (keyCode === RIGHT_KEY) {
             this.right = isPressed;
@@ -134,86 +190,92 @@ class Controller {
     }
 }
 
-let controller = new Controller();
-let enemies = new Array();
-
-let hero = createSprite(
-    "hero",
-    INIT_HERO_POSITION_X,
-    INIT_HERO_POSITION_Y,
-    HERO_SIZE_X,
-    HERO_SIZE_Y
-);
-let laser = createSprite(
-    "laser",
-    LASER_FROM_X,
-    LASER_FROM_Y,
-    LASER_SIZE_X,
-    LASER_SIZE_Y
-);
-
-let intersects = (a, b) => {
-    return (
-        a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
-    );
-};
-
-function createSprite(id, x, y, w, h) {
-    let result = new Object();
-    result.id = id;
-    result.x = x;
-    result.y = y;
-    result.w = w;
-    result.h = h;
-
-    return result;
-}
-
-document.onkeydown = function(e) {
-    controller.toggleKey(e.keyCode, true);
-};
-
-document.onkeyup = function(e) {
-    controller.toggleKey(e.keyCode, false);
-};
-
-function ensureBounds(sprite, ignoreY) {
-    if (sprite.x < SCREEN_LEFT) {
-        sprite.x = SCREEN_LEFT;
+class Sprite {
+    id;
+    x;
+    y;
+    width;
+    height;
+    constructor(id, x, y, width, height) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
-    if (!ignoreY && sprite.y < SCREEN_TOP) {
-        sprite.y = SCREEN_TOP;
-    }
-    if (sprite.x + sprite.w > SCREEN_RIGHT) {
-        sprite.x = SCREEN_RIGHT - sprite.w;
-    }
-    if (!ignoreY && sprite.y + sprite.h > SCREEN_BOTTOM) {
-        sprite.y = SCREEN_BOTTOM - sprite.h;
+
+    setPosition() {
+        let e = document.getElementById(this.id);
+        e.style.left = this.x + "px";
+        e.style.top = this.y + "px";
     }
 }
 
-function setPosition(sprite) {
-    let e = document.getElementById(sprite.id);
-    e.style.left = sprite.x + "px";
-    e.style.top = sprite.y + "px";
-}
+class Field {
+    constructor(startX, startY, endX, endY, hero) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.enemies = new Array();
+        this.lasers = new Array();
+        this.hero = hero;
+    }
 
-function handleControls() {
-    if (controller.up && !ended) {
-        hero.y -= HERO_MOVEMENT;
+    pushEnemy(enemy) {
+        this.enemies.push(enemy);
     }
-    if (controller.down && !ended) {
-        hero.y += HERO_MOVEMENT;
+
+    pushLaser(laser) {
+        this.lasers.push(laser);
     }
-    if (controller.left && !ended) {
-        hero.x -= HERO_MOVEMENT;
+
+    ensureBounds(sprite, ignoreY) {
+        if (sprite.x < this.startX) {
+            sprite.x = this.startX;
+        }
+        if (!ignoreY && sprite.y < this.startY) {
+            sprite.y = this.startY;
+        }
+        if (sprite.x + sprite.w > this.endX) {
+            sprite.x = this.endX - sprite.w;
+        }
+        if (!ignoreY && sprite.y + sprite.h > this.endY) {
+            sprite.y = this.endY - sprite.h;
+        }
     }
-    if (controller.right && !ended) {
-        hero.x += HERO_MOVEMENT;
+
+    addEnemy() {
+        let interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV01;
+        // if (iterations > ITERATIONS_LV04) {
+        //     interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV04;
+        // } else if (iterations > ITERATIONS_LV03) {
+        //     interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV03;
+        // } else if (iterations > ITERATIONS_LV02) {
+        //     interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV02;
+        // }
+
+        if (Util.getRandom(interval) === 0) {
+            let elementName = "enemy" + Util.getRandom(10000000);
+            let enemy = new Sprite(
+                elementName,
+                Util.getRandom(450),
+                INIT_ENEMY_POSITION_Y,
+                ENEMY_SIZE_X,
+                ENEMY_SIZE_Y
+            );
+
+            let element = document.createElement("div");
+            element.id = enemy.id;
+            element.className = "enemy";
+            document.getElementById("container").appendChild(element);
+
+            this.pushEnemy(enemy);
+        }
     }
-    if (controller.space && laser.y <= LASER_FROM_Y && !ended) {
-        // TODO this if statement is the thing that limit laser only one
-        
+
+    newLaser() {
+        let laserName = "laser" + Util.getRandom(10000000);
         /**
          * theory of calculation
          *     laser.x = hero.x + (hero.w / 2) - (laser.w / 2)
@@ -221,158 +283,140 @@ function handleControls() {
          * But actually these thoery doesn't work on practice
          * So use correction value
          */
-        laser.x = hero.x + hero.w / 2 - laser.w / 2 - 3; // "-3" is correction value
-        laser.y = hero.y - laser.h + 25; // "+25" is correction value
-    }
-    if (controller.enter && ended === true) {
-        start();
+         // "-3" is correction value
+         // "+25" is correction value
+        let laser = new Sprite(
+            laserName,
+            game.match.field.hero.x + game.match.field.hero.w / 2 - LASER_SIZE_X / 2 - 3,
+            game.match.field.hero.y - LASER_SIZE_Y + 25,
+            LASER_SIZE_X,
+            LASER_SIZE_Y
+        );
+        console.log(laser);
+
+        let laserElm = document.createElement("div");
+        laserElm.id = laser.id;
+        laserElm.className = "laser";
+        document.getElementById("container").appendChild(laserElm);
+
+        game.match.field.pushLaser(laser);
     }
 
-    ensureBounds(hero);
-}
+    showSprites() {
+        this.hero.setPosition();
+        for (let i = 0; i < this.lasers.length; i++) {
+            this.lasers[i].setPosition();
+        }
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].setPosition();
+        }
+    }
 
-function checkCollisions() {
-    for (let i = 0; i < enemies.length; i++) {
-        if (intersects(laser, enemies[i])) {
-            let element = document.getElementById(enemies[i].id);
-            element.style.visibility = "hidden";
-            element.parentNode.removeChild(element);
-            enemies.splice(i, 1);
-            i--;
-            laser.y = -laser.h;
-            score += BASIC_SCORE_POINT;
-        } else if (intersects(hero, enemies[i])) {
-            gameOver();
-        } else if (enemies[i].y + enemies[i].h >= SCREEN_BOTTOM + 40) {
-            let element = document.getElementById(enemies[i].id);
-            element.style.visibility = "hidden";
-            element.parentNode.removeChild(element);
-            enemies.splice(i, 1);
-            i--;
+    checkCollisions() {
+        for (let i = 0; i < this.enemies.length; i++) {
+            if (intersects(laser, this.enemies[i])) {
+                let element = document.getElementById(
+                    this.enemies[i].id
+                );
+                element.style.visibility = "hidden";
+                element.parentNode.removeChild(element);
+                this.enemies.splice(i, 1);
+                i--;
+                laser.y = -laser.h;
+                score += BASIC_SCORE_POINT;
+            } else if (intersects(hero, this.enemies[i])) {
+                gameOver();
+            } else if (
+                this.enemies[i].y + this.enemies[i].h >=
+                SCREEN_BOTTOM + 40
+            ) {
+                let element = document.getElementById(
+                    this.enemies[i].id
+                );
+                element.style.visibility = "hidden";
+                element.parentNode.removeChild(element);
+                this.enemies.splice(i, 1);
+                i--;
+            }
         }
     }
 }
 
-function gameOver() {
-    ended = true;
-    let element = document.getElementById(hero.id);
-    element.style.visibility = "hidden";
-    elmGameOver = document.getElementById("gameover");
-    elmGameOver.style.visibility = "visible";
-    elmRestart = document.getElementById("restart");
-    elmRestart.style.visibility = "visible";
-}
+let controller = new Controller(
+    LEFT_KEY,
+    RIGHT_KEY,
+    UP_KEY,
+    DOWN_KEY,
+    SPACE_KEY,
+    ENTER_KEY
+);
+let game = new Game(controller);
 
-function showSprites() {
-    setPosition(hero);
-    setPosition(laser);
-    for (let i = 0; i < enemies.length; i++) {
-        setPosition(enemies[i]);
-    }
-    if (!ended) {
-        scoreElement.innerHTML = "SCORE: " + score;
-    }
-}
+let intersects = (a, b) => {
+    return (
+        a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+    );
+};
 
-function updatePosition() {
-    for (let i = 0; i < enemies.length; i++) {
-        enemies[i].y += 4;
-        enemies[i].x += getRandom(7) - 3;
-        ensureBounds(enemies[i], true);
-    }
-    laser.y -= 12;
-}
+document.onkeydown = function(e) {
+    game.controller.toggleKey(e.keyCode, true);
+};
 
-function addEnemy() {
-    let interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV01;
-    if (iterations > ITERATIONS_LV04) {
-        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV04;
-    } else if (iterations > ITERATIONS_LV03) {
-        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV03;
-    } else if (iterations > ITERATIONS_LV02) {
-        interval = FREQUENCY_OF_ENEMY_APPEARANCE_LV02;
+document.onkeyup = function(e) {
+    game.controller.toggleKey(e.keyCode, false);
+};
+
+class View {
+    updatePosition() {
+        for (let i = 0; i < game.match.field.enemies.length; i++) {
+            game.match.field.enemies[i].y += 4;
+            game.match.field.enemies[i].x += Util.getRandom(7) - 3;
+            game.match.field.ensureBounds(game.match.field.enemies[i], true);
+        }
+
+        for (let i = 0; i < game.match.field.lasers.length; i++) {
+            game.match.field.lasers[i].y -= 12;
+            game.match.field.ensureBounds(game.match.field.lasers[i], true);
+        }
     }
 
-    if (getRandom(interval) === 0) {
-        let elementName = "enemy" + getRandom(10000000);
-        let enemy = createSprite(
-            elementName,
-            getRandom(450),
-            INIT_ENEMY_POSITION_Y,
-            ENEMY_SIZE_X,
-            ENEMY_SIZE_Y
-        );
-
-        let element = document.createElement("div");
-        element.id = enemy.id;
-        element.className = "enemy";
-        document.getElementById("container").appendChild(element);
-
-        enemies[enemies.length] = enemy;
+    static setVisible(elm) {
+        elm.style.visibility = "visible";
+    }
+    
+    static setHidden(elm) {
+        elm.style.visibility = "hidden";
     }
 }
 
-function getRandom(maxSize) {
-    return parseInt(Math.random() * maxSize);
+class Util {
+    static getRandom(maxSize) {
+        return parseInt(Math.random() * maxSize);
+    }
 }
 
 function loop() {
-    if (new Date().getTime() - lastLoopRun > 40) {
-        updatePosition();
-        handleControls();
-        checkCollisions();
+    const time = new Date().getTime();
+    if (time - game.match.lastLoopRun > 40) {
+        view.updatePosition();
+        game.handleControls();
+        game.match.field.checkCollisions();
 
-        if (ended === false) {
-            addEnemy();
+        if (game.match.ended === false) {
+            game.match.field.addEnemy();
         }
 
-        showSprites();
+        game.match.field.showSprites();
+        game.match.showScore();
 
-        lastLoopRun = new Date().getTime();
-        iterations++;
+        game.match.lastLoopRun = time;
+        game.match.iterations++;
     }
-    setTimeout("loop();", 2);
+    setInterval('loop()', 20);
 }
 
-function start() {
-    console.log("start()");
-    ended = false;
-    hero = createSprite(
-        "hero",
-        INIT_HERO_POSITION_X,
-        INIT_HERO_POSITION_Y,
-        HERO_SIZE_X,
-        HERO_SIZE_Y
-    );
-    laser = createSprite(
-        "laser",
-        LASER_FROM_X,
-        LASER_FROM_Y,
-        LASER_SIZE_X,
-        LASER_SIZE_Y
-    );
-    score = 0;
-    for (let i = 0; i < enemies.length; i++) {
-        document.getElementById(enemies[i].id).remove();
-    }
-    enemies = new Array();
-    setPosition(hero);
-    setPosition(laser);
-    getVisible(heroElm);
-    getHidden(elmGameOver);
-    getHidden(elmRestart);
+let view = new View();
+elmRestart.addEventListener("click", restart);
 
-    iterations = 0;
-}
-
-function getVisible(elm) {
-    elm.style.visibility = "visible";
-}
-
-function getHidden(elm) {
-    elm.style.visibility = "hidden";
-}
-
-elmRestart.addEventListener("click", start);
-
-loop();
+game.ended = false;
+game.start();
