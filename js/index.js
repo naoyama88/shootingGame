@@ -147,7 +147,7 @@ function handleControls() {
     if (controller.right && !ended) {
         hero.x += HERO_MOVEMENT;
     }
-    if (controller.space && laser.y <= -120 && !ended) {
+    if (controller.space && laser.y <= LASER_FROM_Y && !ended) {
         /**
          * theory of calculation
          *     laser.x = hero.x + (hero.w / 2) - (laser.w / 2)
@@ -177,7 +177,7 @@ function checkCollisions() {
             score += BASIC_SCORE_POINT;
         } else if (intersects(hero, enemies[i])) {
             gameOver();
-        } else if (enemies[i].y + enemies[i].h >= 490) {
+        } else if (enemies[i].y + enemies[i].h >= SCREEN_BOTTOM + 40) {
             let element = document.getElementById(enemies[i].id);
             element.style.visibility = "hidden";
             element.parentNode.removeChild(element);
@@ -240,7 +240,7 @@ function addEnemy() {
         let element = document.createElement("div");
         element.id = enemy.id;
         element.className = "enemy";
-        document.children[0].appendChild(element);
+        document.getElementById('background').appendChild(element);
 
         enemies[enemies.length] = enemy;
     }
