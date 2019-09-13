@@ -52,12 +52,27 @@ class ControllerClass {
     }
 }
 
-let controllerClass = new ControllerClass(INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y);
+let controllerClass = new ControllerClass(
+    INIT_HERO_POSITION_X,
+    INIT_HERO_POSITION_Y
+);
 let controller = new Object();
 let enemies = new Array();
 
-let hero = createSprite("hero", INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y, HERO_SIZE_X, HERO_SIZE_Y);
-let laser = createSprite("laser", LASER_FROM_X, LASER_FROM_Y, LASER_SIZE_X, LASER_SIZE_Y);
+let hero = createSprite(
+    "hero",
+    INIT_HERO_POSITION_X,
+    INIT_HERO_POSITION_Y,
+    HERO_SIZE_X,
+    HERO_SIZE_Y
+);
+let laser = createSprite(
+    "laser",
+    LASER_FROM_X,
+    LASER_FROM_Y,
+    LASER_SIZE_X,
+    LASER_SIZE_Y
+);
 
 let intersects = (a, b) => {
     return (
@@ -205,7 +220,13 @@ function addEnemy() {
 
     if (getRandom(interval) === 0) {
         let elementName = "enemy" + getRandom(10000000);
-        let enemy = createSprite(elementName, getRandom(450), INIT_ENEMY_POSITION_Y, ENEMY_SIZE_X, ENEMY_SIZE_Y);
+        let enemy = createSprite(
+            elementName,
+            getRandom(450),
+            INIT_ENEMY_POSITION_Y,
+            ENEMY_SIZE_X,
+            ENEMY_SIZE_Y
+        );
 
         let element = document.createElement("div");
         element.id = enemy.id;
@@ -249,8 +270,20 @@ document.onkeyup = function(e) {
 function start() {
     console.log("start()");
     ended = false;
-    hero = createSprite("hero", INIT_HERO_POSITION_X, INIT_HERO_POSITION_Y, HERO_SIZE_X, HERO_SIZE_Y);
-    laser = createSprite("laser", LASER_FROM_X, LASER_FROM_Y, LASER_SIZE_X, LASER_SIZE_Y);
+    hero = createSprite(
+        "hero",
+        INIT_HERO_POSITION_X,
+        INIT_HERO_POSITION_Y,
+        HERO_SIZE_X,
+        HERO_SIZE_Y
+    );
+    laser = createSprite(
+        "laser",
+        LASER_FROM_X,
+        LASER_FROM_Y,
+        LASER_SIZE_X,
+        LASER_SIZE_Y
+    );
     score = 0;
     for (let i = 0; i < enemies.length; i++) {
         document.getElementById(enemies[i].id).remove();
