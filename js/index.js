@@ -148,8 +148,15 @@ function handleControls() {
         hero.x += HERO_MOVEMENT;
     }
     if (controller.space && laser.y <= -120 && !ended) {
-        laser.x = hero.x + 6;
-        laser.y = hero.y - laser.h;
+        /**
+         * theory of calculation
+         *     laser.x = hero.x + (hero.w / 2) - (laser.w / 2)
+         *     laser.y = hero.y - laser.h
+         * But actually these thoery doesn't work on practice
+         * So use correction value
+         */
+        laser.x = hero.x + (hero.w / 2) - (laser.w / 2) - 3; // "-3" is correction value
+        laser.y = hero.y - laser.h + 25; // "+25" is correction value
     }
     if (controller.enter && ended === true) {
         start();
