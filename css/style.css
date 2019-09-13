@@ -1,3 +1,7 @@
+* {
+    cursor: url('../img/pointer.png') 24 24, pointer;
+}
+
 #hero {
     background-image: url("../img/hero_01.png");
     height: 500px;
