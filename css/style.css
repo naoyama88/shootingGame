@@ -1,61 +1,54 @@
-* {
-    cursor: url('../img/pointer.png') 24 24, pointer;
-    font-family: 'VT323', monospace;
+:root {
+    --background-color: #ffffff;
+    --game-size-width: 500px;
+    --game-size-height: 500px;
+}
+
+body * {
+    cursor: url("../img/pointer.png") 24 24, pointer;
+    font-family: "VT323", monospace;
 }
 
 #container {
-    background-image: url("../img/background_01.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
+    width: var(--game-size-width);
+    height: var(--game-size-height);
+    overflow: hidden;
+    position: relative;
+}
+
+#background {
+    background: url("../img/background_01.jpg") no-repeat center;
     background-size: cover;
     width: 500px;
-    height: 500px;
+    height: 1000px;
     position: absolute;
     left: 0px;
     top: 0px;
-    overflow: hidden;
+    animation: background-falldown 15s linear 0s infinite normal;
 }
 
 #hero {
-    background-image: url("../img/hero_01.png");
-    height: 500px;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url("../img/hero_01.png") no-repeat center;
     background-size: cover;
     width: 20px;
     height: 20px;
     position: absolute;
-
-    /* for debug */
-    /* background-color: red; */
 }
 
 #laser {
-    background-image: url("../img/laser_01.png");
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url("../img/laser_01.png") no-repeat center;
     background-size: cover;
     width: 9px;
     height: 25px;
     position: absolute;
-    overflow: hidden;
-    background-position: 0 0;
-
-    /* for debug */
-    /* background-color: green; */
 }
 
 .enemy {
-    background-image: url("../img/enemy_01.png");
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url("../img/enemy_01.png") no-repeat center;
     background-size: cover;
     width: 35px;
     height: 35px;
     position: absolute;
-
-    /* for debug */
-    /* background-color: blue; */
 }
 
 #score {
@@ -91,20 +84,7 @@
 }
 
 #restart:focus {
-    outline:0;
-}
-
-#background {
-    background-image: url("../img/background_01.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 500px;
-    height: 1000px;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    animation: background-falldown 15s linear 0s infinite normal;
+    outline: 0;
 }
 
 @keyframes background-falldown {
