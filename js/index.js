@@ -66,7 +66,11 @@ class Game {
         }
 
         this.match = new Match();
-        View.setPosition(this.match.hero.id, this.match.hero.x, this.match.hero.y);
+        View.setPosition(
+            this.match.hero.id,
+            this.match.hero.x,
+            this.match.hero.y
+        );
         View.setVisible(heroElm);
         View.setHidden(elmGameOver);
         View.setHidden(elmRestart);
@@ -181,48 +185,46 @@ class Match {
     showSprites() {
         View.setPosition(this.hero.id, this.hero.x, this.hero.y);
         for (let i = 0; i < this.lasers.length; i++) {
-            View.setPosition(this.lasers[i].id, this.lasers[i].x, this.lasers[i].y);
+            let laser = this.lasers[i];
+            View.setPosition(laser.id, laser.x, laser.y);
         }
         for (let i = 0; i < this.enemies.length; i++) {
-            View.setPosition(this.enemies[i].id, this.enemies[i].x, this.enemies[i].y);
+            let enemy = this.enemies[i];
+            View.setPosition(enemy.id, enemy.x, enemy.y);
         }
     }
 
     checkCollisions() {
         for (let i = 0; i < this.enemies.length; i++) {
+            let enemy = this.enemies[i];
+            if (!this.ended && intersects(this.hero, enemy)) {
+                game.gameOver();
+            } else if (enemy.y + enemy.h >= this.bottom + 40) {
+                View.remove(enemy.id);
+                this.enemies.splice(i, 1);
+                i--;
+                continue;
+            }
+
             for (let y = 0; y < this.lasers.length; y++) {
-                let enemy = this.enemies[i];
                 let laser = this.lasers[y];
-                if (intersects(laser, enemy)) {
-                    View.remove(enemy.id);
-                    this.enemies.splice(i, 1);
-                    i--;
-                    this.score += BASIC_SCORE_POINT;
+                if (laser.y + laser.h <= this.top) {
                     View.remove(laser.id);
                     this.lasers.splice(y, 1);
                     y--;
-                } else if (intersects(this.hero, enemy)) {
-                    game.gameOver();
-                } else if (enemy.y + enemy.h >= this.bottom + 40) {
+                    continue;
+                }
+                if (!this.ended && intersects(laser, enemy)) {
                     View.remove(enemy.id);
                     this.enemies.splice(i, 1);
                     i--;
-                } else if (laser.y + laser.h <= this.top) {
+                    game.match.score += BASIC_SCORE_POINT;
                     View.remove(laser.id);
                     this.lasers.splice(y, 1);
                     y--;
                 }
             }
         }
-
-        // for (let y = 0; y < this.lasers.length; y++) {
-        //     let laser = this.lasers[y];
-        //     if (laser.y + laser.h <= this.top) {
-        //         View.remove(laser.id);
-        //         this.lasers.splice(y, 1);
-        //         y--;
-        //     }
-        // }
     }
 
     updatePosition() {
@@ -298,6 +300,11 @@ class Controller {
 }
 
 class Sprite {
+    id;
+    x;
+    y;
+    w;
+    h;
     constructor(id, x, y, w, h) {
         this.id = id;
         this.x = x;
