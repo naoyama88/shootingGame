@@ -444,6 +444,10 @@ function loop() {
     setInterval("loop()", 20);
 }
 
+function restart() {
+    game.restart();
+}
+
 let view = new View();
 elmRestart.addEventListener("click", restart);
 
