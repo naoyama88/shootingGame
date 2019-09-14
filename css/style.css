@@ -8,7 +8,7 @@ body * {
     font-family: "VT323", monospace;
 }
 
-#container {
+.container {
     width: var(--game-size-width);
     height: var(--game-size-height);
     overflow: hidden;
@@ -27,7 +27,7 @@ body * {
     animation: background-falldown 15s linear 0s infinite normal;
 }
 
-#hero {
+.hero {
     background: url("../img/hero_01.png") no-repeat center;
     background-size: cover;
     width: 20px;
@@ -51,7 +51,7 @@ body * {
     position: absolute;
 }
 
-#score {
+.score {
     color: #ffffff;
     font-size: 40px;
     position: absolute;
@@ -60,7 +60,7 @@ body * {
     z-index: 2;
 }
 
-#pause {
+.pause {
     color: yellow;
     font-size: 50px;
     position: absolute;
@@ -74,19 +74,20 @@ body * {
     animation: blinking 1s linear 0s infinite normal;
 }
 
-#gameover {
+.gameover {
     color: #ff0000;
     font-size: 50px;
+    position: absolute;
+    left: 160px;
+    top: 180px;
     visibility: hidden;
     z-index: 2;
     width: 180px;
-    margin: 0 auto;
-    padding-top: 180px;
 }
 
-#restart {
+.restart {
     color: #000000;
-    font-size: 20px;
+    font-size: 26px;
     visibility: hidden;
     border-radius: 10px;
     line-height: 40px;
@@ -97,14 +98,14 @@ body * {
     border: none;
     position: absolute;
     left: 100px;
-    margin-top: 5px;
+    top: 250px;
 }
 
-#restart:hover {
+.restart:hover {
     cursor: url("../img/pointer_01.png") 24 24, pointer;
 }
 
-#restart:focus {
+.restart:focus {
     outline: 0;
 }
 
