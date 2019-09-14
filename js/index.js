@@ -2,10 +2,14 @@
 
 const HERO_MOVEMENT = 10;
 const BASIC_SCORE_POINT = 100;
-let heroElm = document.getElementById("hero");
+let elmBackground = document.getElementById("background");
+let elmHero = document.getElementById("hero");
 let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
-let scoreElement = document.getElementById("score");
+let elmScore = document.getElementById("score");
+let elmPause = document.getElementById("pause");
+// for event loop setInterval
+let t;
 
 class Game {
     controller;
@@ -41,15 +45,38 @@ class Game {
             if (this.controller.space) {
                 this.match.newLaser();
             }
+            if (this.controller.shiftKeyWork && this.controller.shift) {
+                if (!this.match.paused) {
+                    this.match.paused = true;
+                    this.pause();
+                } else {
+                    this.match.paused = false;
+                    this.resume();
+                }
+            }
+    
+            this.match.ensureBounds(this.match.hero);
         }
+    }
 
-        this.match.ensureBounds(this.match.hero);
+    shiftKeyControls() {
+        if (this.controller.shiftKeyWork && this.controller.shift) {
+            console.log('shiftKeyControls()');
+            this.controller.shiftKeyWork = false;
+            if (!this.match.paused) {
+                this.match.paused = true;
+                this.pause();
+            } else {
+                this.match.paused = false;
+                this.resume();
+            }
+        }
     }
 
     gameOver() {
         if (!this.match.ended) {
             this.match.ended = true;
-            View.setHidden(heroElm);
+            View.setHidden(elmHero);
             View.setVisible(elmGameOver);
             View.setVisible(elmRestart);
         }
@@ -71,11 +98,37 @@ class Game {
             this.match.hero.x,
             this.match.hero.y
         );
-        View.setVisible(heroElm);
+        View.setVisible(elmHero);
         View.setHidden(elmGameOver);
         View.setHidden(elmRestart);
 
         this.match.iterations = 0;
+    }
+
+    pause() {
+        this.match.paused = true;
+        View.setAnimationPlayState(elmBackground, false);
+        disableShiftKey();
+        setTimeout(function(){
+            console.log('pause: enableShiftKey');
+            game.controller.shiftKeyWork = true;
+        }, 200);
+        View.setVisible(elmPause);
+        // TODO animation play state pause
+        this.controller.shift = false;
+    }
+
+    resume() {
+        this.match.paused = false;
+        View.setAnimationPlayState(elmBackground, true);
+        disableShiftKey();
+        setTimeout(function(){
+            console.log('resume: enableShiftKey');
+            game.controller.shiftKeyWork = true;
+        }, 200);
+        View.setHidden(elmPause);
+        // TODO animation play state running
+        this.controller.shift = false;
     }
 }
 
@@ -92,6 +145,7 @@ class Match {
     lasers;
     hero;
     createdLastLaserAt;
+    paused;
     constructor() {
         const SCREEN_LEFT = 20;
         const SCREEN_RIGHT = 480;
@@ -109,11 +163,12 @@ class Match {
         this.lasers = new Array();
         this.hero = new Hero((this.right - this.left) / 2, this.bottom);
         this.createdLastLaserAt = 0;
+        this.paused = false;
     }
 
     showScore() {
         if (!this.ended) {
-            View.setInnerHtml(scoreElement, "SCORE: " + this.score);
+            View.setInnerHtml(elmScore, "SCORE: " + this.score);
         }
     }
 
@@ -254,6 +309,8 @@ class Controller {
     down;
     space;
     enter;
+    shift;
+    shiftKeyWork;
     constructor() {
         const LEFT_KEY = 37;
         const UP_KEY = 38;
@@ -261,18 +318,28 @@ class Controller {
         const DOWN_KEY = 40;
         const SPACE_KEY = 32;
         const ENTER_KEY = 13;
+        const SHIFT_KEY = 16;
         this.leftKey = LEFT_KEY;
         this.upKey = UP_KEY;
         this.rightKey = RIGHT_KEY;
         this.downKey = DOWN_KEY;
         this.spaceKey = SPACE_KEY;
         this.enterKey = ENTER_KEY;
+        this.shiftKey = SHIFT_KEY;
         this.left = false;
         this.right = false;
         this.up = false;
         this.down = false;
         this.space = false;
         this.enter = false;
+        this.shift = false;
+        this.leftKeyWork = true;
+        this.rightKeyWork = true;
+        this.upKeyWork = true;
+        this.downKeyWork = true;
+        this.spaceKeyWork = true;
+        this.enterKeyWork = true;
+        this.shiftKeyWork = true;
     }
 
     toggleKey(keyCode, isPressed) {
@@ -294,6 +361,11 @@ class Controller {
                 break;
             case this.enterKey:
                 this.enter = isPressed;
+                break;
+            case this.shiftKey:
+                if (this.shiftKeyWork) {
+                    this.shift = isPressed;
+                }
                 break;
         }
     }
@@ -407,6 +479,16 @@ class View {
     static remove(id) {
         document.getElementById(id).remove();
     }
+
+    static setAnimationPlayState(elm, state) {
+        if (state) {
+            elm.classList.add('animation-run');
+            elm.classList.remove('animation-paused');
+        } else {
+            elm.classList.add('animation-paused');
+            elm.classList.remove('animation-run');
+        }
+    }
 }
 
 class Util {
@@ -417,7 +499,9 @@ class Util {
 
 function loop() {
     const time = new Date().getTime();
-    if (time - game.match.lastLoopRun > 40) {
+    if (game.match.paused) {
+        game.shiftKeyControls();
+    } else if (time - game.match.lastLoopRun > 40) {
         game.match.updatePosition();
         game.handleControls();
         game.match.checkCollisions();
@@ -434,7 +518,6 @@ function loop() {
 
         game.match.createdLastLaserAt++;
     }
-    setInterval("loop()", 20);
 }
 
 function restart() {
@@ -443,6 +526,17 @@ function restart() {
 
 let view = new View();
 elmRestart.addEventListener("click", restart);
+
+t = appSetInterval();
+
+function appSetInterval() {
+    return setInterval("loop()", 20);
+}
+
+function disableShiftKey() {
+    console.log('disableShiftKey');
+    game.controller.shiftKeyWork = false;
+}
 
 game.ended = false;
 game.start();
