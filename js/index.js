@@ -202,9 +202,25 @@ class Match {
 
     checkCollisions() {
         for (let i = 0; i < this.enemies.length; i++) {
+            let enemy = this.enemies[i];
+            if (!this.ended && intersects(this.hero, enemy)) {
+                game.gameOver();
+            } else if (enemy.y + enemy.h >= this.bottom + 40) {
+                document.getElementById(enemy.id).remove();
+                this.enemies.splice(i, 1);
+                i--;
+                continue;
+            }
+
             for (let y = 0; y < this.lasers.length; y++) {
-                if (intersects(this.lasers[y], this.enemies[i])) {
-                    document.getElementById(this.enemies[i].id).remove();
+                if (this.lasers[y].y + this.lasers[y].h <= this.top) {
+                    document.getElementById(this.lasers[y].id).remove();
+                    this.lasers.splice(y, 1);
+                    y--;
+                    continue;
+                }
+                if (!this.ended && intersects(this.lasers[y], enemy)) {
+                    document.getElementById(enemy.id).remove();
                     this.enemies.splice(i, 1);
                     i--;
                     game.match.score += BASIC_SCORE_POINT;
@@ -213,27 +229,6 @@ class Match {
                     this.lasers.splice(y, 1);
                     y--;
                 }
-            }
-        }
-
-        for (let i = 0; i < this.enemies.length; i++) {
-            if (intersects(this.hero, this.enemies[i])) {
-                game.gameOver();
-            } else if (
-                this.enemies[i].y + this.enemies[i].h >=
-                this.bottom + 40
-            ) {
-                document.getElementById(this.enemies[i].id).remove();
-                this.enemies.splice(i, 1);
-                i--;
-            }
-        }
-
-        for (let y = 0; y < this.lasers.length; y++) {
-            if (this.lasers[y].y + this.lasers[y].h <= this.top) {
-                document.getElementById(this.lasers[y].id).remove();
-                this.lasers.splice(y, 1);
-                y--;
             }
         }
     }
