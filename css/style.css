@@ -5,7 +5,6 @@
 }
 
 body * {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
     font-family: "VT323", monospace;
 }
 
@@ -85,6 +84,10 @@ body * {
     position: absolute;
     left: 100px;
     margin-top: 5px;
+}
+
+#restart:hover {
+    cursor: url("../img/pointer_01.png") 24 24, pointer;
 }
 
 #restart:focus {
