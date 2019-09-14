@@ -98,10 +98,8 @@ class Game {
         this.match.ended = true;
         // let heroElement = document.getElementById(this.match.field.hero.id);
         View.setHidden(heroElm);
-        let gameOverElm = document.getElementById("gameover");
-        View.setVisible(gameOverElm);
-        let restartElm = document.getElementById("restart");
-        View.setVisible(restartElm);
+        View.setVisible(elmGameOver);
+        View.setVisible(elmRestart);
     }
 
     restart() {
