@@ -44,6 +44,8 @@ let elmRestart = document.getElementById("restart");
 let scoreElement = document.getElementById("score");
 
 class Game {
+    controller;
+    match;
     constructor(controller) {
         this.controller = controller;
         this.match = null;
