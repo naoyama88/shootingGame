@@ -21,36 +21,38 @@ class Game {
     }
 
     handleControls() {
-        if (this.controller.up && !this.match.ended) {
-            this.match.hero.y -= HERO_MOVEMENT;
-        }
-        if (this.controller.down && !this.match.ended) {
-            this.match.hero.y += HERO_MOVEMENT;
-        }
-        if (this.controller.left && !this.match.ended) {
-            this.match.hero.x -= HERO_MOVEMENT;
-        }
-        if (this.controller.right && !this.match.ended) {
-            this.match.hero.x += HERO_MOVEMENT;
-        }
-        if (this.controller.space && !this.match.ended) {
-            this.match.newLaser();
-        }
-        if (this.controller.enter && this.match.ended === true) {
-            this.restart();
+        if (this.match.ended) {
+            if (this.controller.enter) {
+                this.restart();
+            }
+        } else {
+            if (this.controller.up) {
+                this.match.hero.y -= HERO_MOVEMENT;
+            }
+            if (this.controller.down) {
+                this.match.hero.y += HERO_MOVEMENT;
+            }
+            if (this.controller.left) {
+                this.match.hero.x -= HERO_MOVEMENT;
+            }
+            if (this.controller.right) {
+                this.match.hero.x += HERO_MOVEMENT;
+            }
+            if (this.controller.space) {
+                this.match.newLaser();
+            }
         }
 
         this.match.ensureBounds(this.match.hero);
     }
 
     gameOver() {
-        if (this.match.ended) {
-            return;
+        if (!this.match.ended) {
+            this.match.ended = true;
+            View.setHidden(heroElm);
+            View.setVisible(elmGameOver);
+            View.setVisible(elmRestart);
         }
-        this.match.ended = true;
-        View.setHidden(heroElm);
-        View.setVisible(elmGameOver);
-        View.setVisible(elmRestart);
     }
 
     restart() {
