@@ -57,7 +57,13 @@ class Game {
             HERO_SIZE_X,
             HERO_SIZE_Y
         );
-        let field = new Field(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM, hero);
+        let field = new Field(
+            SCREEN_LEFT,
+            SCREEN_TOP,
+            SCREEN_RIGHT,
+            SCREEN_BOTTOM,
+            hero
+        );
         this.match = new Match(field);
         loop();
     }
@@ -75,29 +81,30 @@ class Game {
         if (this.controller.right && !this.match.ended) {
             this.match.field.hero.x += HERO_MOVEMENT;
         }
-        if (this.controller.space && !this.ended) {
+        if (this.controller.space && !this.match.ended) {
             this.match.field.newLaser();
         }
-        if (this.controller.enter && this.ended === true) {
+        if (this.controller.enter && this.match.ended === true) {
             this.restart();
         }
 
-        this.match.field.ensureBounds(hero);
+        this.match.field.ensureBounds(this.match.field.hero);
     }
 
     gameOver() {
+        if (this.match.ended) {
+            return;
+        }
         this.match.ended = true;
-        let heroElm = document.getElementById(hero.id);
-        heroElm.style.visibility = "hidden";
-        gameOverElm = document.getElementById("gameover");
-        gameOverElm.style.visibility = "visible";
-        restartElm = document.getElementById("restart");
-        restartElm.style.visibility = "visible";
+        // let heroElement = document.getElementById(this.match.field.hero.id);
+        View.setHidden(heroElm);
+        let gameOverElm = document.getElementById("gameover");
+        View.setVisible(gameOverElm);
+        let restartElm = document.getElementById("restart");
+        View.setVisible(restartElm);
     }
 
     restart() {
-        console.log("restart()");
-
         for (let i = 0; i < this.match.field.enemies.length; i++) {
             document.getElementById(this.match.field.enemies[i].id).remove();
         }
@@ -112,11 +119,18 @@ class Game {
             HERO_SIZE_X,
             HERO_SIZE_Y
         );
-        let field = new Field(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM, hero);
+        let field = new Field(
+            SCREEN_LEFT,
+            SCREEN_TOP,
+            SCREEN_RIGHT,
+            SCREEN_BOTTOM,
+            hero
+        );
         this.match = new Match(field);
         this.match.field.enemies = new Array();
         this.match.field.lasers = new Array();
         this.match.field.hero.setPosition();
+        View.setVisible(heroElm);
         View.setHidden(elmGameOver);
         View.setHidden(elmRestart);
 
@@ -163,7 +177,6 @@ class Controller {
     }
 
     toggleKey(keyCode, isPressed) {
-        console.log(keyCode);
         switch (keyCode) {
             case LEFT_KEY:
                 this.left = isPressed;
@@ -171,21 +184,18 @@ class Controller {
             case RIGHT_KEY:
                 this.right = isPressed;
                 break;
-        }
-        if (keyCode === RIGHT_KEY) {
-            this.right = isPressed;
-        }
-        if (keyCode === UP_KEY) {
-            this.up = isPressed;
-        }
-        if (keyCode === DOWN_KEY) {
-            this.down = isPressed;
-        }
-        if (keyCode === SPACE_KEY) {
-            this.space = isPressed;
-        }
-        if (keyCode === ENTER_KEY) {
-            this.enter = isPressed;
+            case UP_KEY:
+                this.up = isPressed;
+                break;
+            case DOWN_KEY:
+                this.down = isPressed;
+                break;
+            case SPACE_KEY:
+                this.space = isPressed;
+                break;
+            case ENTER_KEY:
+                this.enter = isPressed;
+                break;
         }
     }
 }
@@ -194,14 +204,14 @@ class Sprite {
     id;
     x;
     y;
-    width;
-    height;
-    constructor(id, x, y, width, height) {
+    w;
+    h;
+    constructor(id, x, y, w, h) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.w = w;
+        this.h = h;
     }
 
     setPosition() {
@@ -220,14 +230,15 @@ class Field {
         this.enemies = new Array();
         this.lasers = new Array();
         this.hero = hero;
+        this.createdLastLaserAt = 0;
     }
 
     pushEnemy(enemy) {
-        this.enemies.push(enemy);
+        this.enemies[this.enemies.length] = enemy;
     }
 
     pushLaser(laser) {
-        this.lasers.push(laser);
+        this.lasers[this.lasers.length] = laser;
     }
 
     ensureBounds(sprite, ignoreY) {
@@ -275,6 +286,11 @@ class Field {
     }
 
     newLaser() {
+        console.log(this.createdLastLaserAt);
+        if (this.createdLastLaserAt < 20) {
+            return;
+        }
+        this.createdLastLaserAt = 0;
         let laserName = "laser" + Util.getRandom(10000000);
         /**
          * theory of calculation
@@ -283,16 +299,18 @@ class Field {
          * But actually these thoery doesn't work on practice
          * So use correction value
          */
-         // "-3" is correction value
-         // "+25" is correction value
+        // "-3" is correction value
+        // "+25" is correction value
         let laser = new Sprite(
             laserName,
-            game.match.field.hero.x + game.match.field.hero.w / 2 - LASER_SIZE_X / 2 - 3,
+            game.match.field.hero.x +
+                game.match.field.hero.w / 2 -
+                LASER_SIZE_X / 2 -
+                3,
             game.match.field.hero.y - LASER_SIZE_Y + 25,
             LASER_SIZE_X,
             LASER_SIZE_Y
         );
-        console.log(laser);
 
         let laserElm = document.createElement("div");
         laserElm.id = laser.id;
@@ -314,29 +332,39 @@ class Field {
 
     checkCollisions() {
         for (let i = 0; i < this.enemies.length; i++) {
-            if (intersects(laser, this.enemies[i])) {
-                let element = document.getElementById(
-                    this.enemies[i].id
-                );
-                element.style.visibility = "hidden";
-                element.parentNode.removeChild(element);
-                this.enemies.splice(i, 1);
-                i--;
-                laser.y = -laser.h;
-                score += BASIC_SCORE_POINT;
-            } else if (intersects(hero, this.enemies[i])) {
-                gameOver();
+
+            for (let y = 0; y < this.lasers.length; y++) {
+                if (intersects(this.lasers[y], this.enemies[i])) {
+                    document.getElementById(this.enemies[i].id).remove();
+                    this.enemies.splice(i, 1);
+                    i--;
+                    game.match.score += BASIC_SCORE_POINT;
+                    // remove laser
+                    document.getElementById(this.lasers[y].id).remove();
+                    this.lasers.splice(y, 1);
+                    y--;
+                }
+            }
+        }
+
+        for (let i = 0; i < this.enemies.length; i++) {
+            if (intersects(this.hero, this.enemies[i])) {
+                game.gameOver();
             } else if (
                 this.enemies[i].y + this.enemies[i].h >=
                 SCREEN_BOTTOM + 40
             ) {
-                let element = document.getElementById(
-                    this.enemies[i].id
-                );
-                element.style.visibility = "hidden";
-                element.parentNode.removeChild(element);
+                document.getElementById(this.enemies[i].id).remove();
                 this.enemies.splice(i, 1);
                 i--;
+            }
+        }
+
+        for (let y = 0; y < this.lasers.length; y++) {
+            if (this.lasers[y].y + this.lasers[y].h <= SCREEN_TOP) {
+                document.getElementById(this.lasers[y].id).remove();
+                this.lasers.splice(y, 1);
+                y--;
             }
         }
     }
@@ -383,7 +411,7 @@ class View {
     static setVisible(elm) {
         elm.style.visibility = "visible";
     }
-    
+
     static setHidden(elm) {
         elm.style.visibility = "hidden";
     }
@@ -411,8 +439,10 @@ function loop() {
 
         game.match.lastLoopRun = time;
         game.match.iterations++;
+
+        game.match.field.createdLastLaserAt++;
     }
-    setInterval('loop()', 20);
+    setInterval("loop()", 20);
 }
 
 let view = new View();
