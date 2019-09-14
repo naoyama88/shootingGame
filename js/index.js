@@ -56,15 +56,19 @@ class Game {
     restart() {
         if (this.match !== null) {
             for (let i = 0; i < this.match.enemies.length; i++) {
-                document.getElementById(this.match.enemies[i].id).remove();
+                View.remove(this.match.enemies[i].id);
             }
             for (let i = 0; i < this.match.lasers.length; i++) {
-                document.getElementById(this.match.lasers[i].id).remove();
+                View.remove(this.match.lasers[i].id);
             }
         }
 
         this.match = new Match();
-        View.setPosition(this.match.hero.id, this.match.hero.x, this.match.hero.y);
+        View.setPosition(
+            this.match.hero.id,
+            this.match.hero.x,
+            this.match.hero.y
+        );
         View.setVisible(heroElm);
         View.setHidden(elmGameOver);
         View.setHidden(elmRestart);
@@ -107,7 +111,7 @@ class Match {
 
     showScore() {
         if (!this.ended) {
-            scoreElement.innerHTML = "SCORE: " + this.score;
+            View.setInnerHtml(scoreElement, "SCORE: " + this.score);
         }
     }
 
