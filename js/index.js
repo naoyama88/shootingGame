@@ -185,18 +185,12 @@ class Match {
     showSprites() {
         View.setPosition(this.hero.id, this.hero.x, this.hero.y);
         for (let i = 0; i < this.lasers.length; i++) {
-            View.setPosition(
-                this.lasers[i].id,
-                this.lasers[i].x,
-                this.lasers[i].y
-            );
+            let laser = this.lasers[i];
+            View.setPosition(laser.id, laser.x, laser.y);
         }
         for (let i = 0; i < this.enemies.length; i++) {
-            View.setPosition(
-                this.enemies[i].id,
-                this.enemies[i].x,
-                this.enemies[i].y
-            );
+            let enemy = this.enemies[i];
+            View.setPosition(enemy.id, enemy.x, enemy.y);
         }
     }
 
@@ -206,26 +200,26 @@ class Match {
             if (!this.ended && intersects(this.hero, enemy)) {
                 game.gameOver();
             } else if (enemy.y + enemy.h >= this.bottom + 40) {
-                document.getElementById(enemy.id).remove();
+                View.remove(enemy.id);
                 this.enemies.splice(i, 1);
                 i--;
                 continue;
             }
 
             for (let y = 0; y < this.lasers.length; y++) {
-                if (this.lasers[y].y + this.lasers[y].h <= this.top) {
-                    document.getElementById(this.lasers[y].id).remove();
+                let laser = this.lasers[y];
+                if (laser.y + laser.h <= this.top) {
+                    View.remove(laser.id);
                     this.lasers.splice(y, 1);
                     y--;
                     continue;
                 }
-                if (!this.ended && intersects(this.lasers[y], enemy)) {
-                    document.getElementById(enemy.id).remove();
+                if (!this.ended && intersects(laser, enemy)) {
+                    View.remove(enemy.id);
                     this.enemies.splice(i, 1);
                     i--;
                     game.match.score += BASIC_SCORE_POINT;
-                    // remove laser
-                    document.getElementById(this.lasers[y].id).remove();
+                    View.remove(laser.id);
                     this.lasers.splice(y, 1);
                     y--;
                 }
