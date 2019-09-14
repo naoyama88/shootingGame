@@ -54,14 +54,13 @@ class Game {
                     this.resume();
                 }
             }
-    
+
             this.match.ensureBounds(this.match.hero);
         }
     }
 
     shiftKeyControls() {
         if (this.controller.shiftKeyWork && this.controller.shift) {
-            console.log('shiftKeyControls()');
             this.controller.shiftKeyWork = false;
             if (!this.match.paused) {
                 this.match.paused = true;
@@ -109,8 +108,7 @@ class Game {
         this.match.paused = true;
         View.setAnimationPlayState(elmBackground, false);
         disableShiftKey();
-        setTimeout(function(){
-            console.log('pause: enableShiftKey');
+        setTimeout(function() {
             game.controller.shiftKeyWork = true;
         }, 200);
         View.setVisible(elmPause);
@@ -122,8 +120,7 @@ class Game {
         this.match.paused = false;
         View.setAnimationPlayState(elmBackground, true);
         disableShiftKey();
-        setTimeout(function(){
-            console.log('resume: enableShiftKey');
+        setTimeout(function() {
             game.controller.shiftKeyWork = true;
         }, 200);
         View.setHidden(elmPause);
@@ -482,11 +479,11 @@ class View {
 
     static setAnimationPlayState(elm, state) {
         if (state) {
-            elm.classList.add('animation-run');
-            elm.classList.remove('animation-paused');
+            elm.classList.add("animation-run");
+            elm.classList.remove("animation-paused");
         } else {
-            elm.classList.add('animation-paused');
-            elm.classList.remove('animation-run');
+            elm.classList.add("animation-paused");
+            elm.classList.remove("animation-run");
         }
     }
 }
@@ -534,7 +531,6 @@ function appSetInterval() {
 }
 
 function disableShiftKey() {
-    console.log('disableShiftKey');
     game.controller.shiftKeyWork = false;
 }
 
