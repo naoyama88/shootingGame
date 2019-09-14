@@ -286,7 +286,6 @@ class Field {
     }
 
     newLaser() {
-        console.log(this.createdLastLaserAt);
         if (this.createdLastLaserAt < 20) {
             return;
         }
