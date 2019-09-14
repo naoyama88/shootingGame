@@ -1,19 +1,7 @@
 "use strict";
 
 const HERO_MOVEMENT = 10;
-
-const INIT_HERO_POSITION_X = 250;
-const INIT_HERO_POSITION_Y = 460;
-const LASER_FROM_X = 0;
-const LASER_FROM_Y = -120;
-
-const HERO_SIZE_X = 20;
-const HERO_SIZE_Y = 20;
-const LASER_SIZE_X = 2;
-const LASER_SIZE_Y = 50;
-
 const BASIC_SCORE_POINT = 100;
-
 let heroElm = document.getElementById("hero");
 let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
