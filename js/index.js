@@ -1,11 +1,5 @@
 "use strict";
 
-const LEFT_KEY = 37;
-const UP_KEY = 38;
-const RIGHT_KEY = 39;
-const DOWN_KEY = 40;
-const SPACE_KEY = 32;
-const ENTER_KEY = 13;
 const HERO_MOVEMENT = 10;
 
 const INIT_HERO_POSITION_X = 250;
@@ -271,39 +265,51 @@ class Controller {
     downKey;
     spaceKey;
     enterKey;
-    left = false;
-    right = false;
-    up = false;
-    down = false;
-    space = false;
-    enter = false;
-    constructor(leftKey, rightKey, upKey, downKey, spaceKey, enterKey) {
-        this.leftKey = leftKey;
-        this.rightKey = rightKey;
-        this.upKey = upKey;
-        this.downKey = downKey;
-        this.spaceKey = spaceKey;
-        this.enterKey = enterKey;
+    left;
+    right;
+    up;
+    down;
+    space;
+    enter;
+    constructor() {
+        const LEFT_KEY = 37;
+        const UP_KEY = 38;
+        const RIGHT_KEY = 39;
+        const DOWN_KEY = 40;
+        const SPACE_KEY = 32;
+        const ENTER_KEY = 13;
+        this.leftKey = LEFT_KEY;
+        this.upKey = UP_KEY;
+        this.rightKey = RIGHT_KEY;
+        this.downKey = DOWN_KEY;
+        this.spaceKey = SPACE_KEY;
+        this.enterKey = ENTER_KEY;
+        this.left = false;
+        this.right = false;
+        this.up = false;
+        this.down = false;
+        this.space = false;
+        this.enter = false;
     }
 
     toggleKey(keyCode, isPressed) {
         switch (keyCode) {
-            case LEFT_KEY:
+            case this.leftKey:
                 this.left = isPressed;
                 break;
-            case RIGHT_KEY:
+            case this.rightKey:
                 this.right = isPressed;
                 break;
-            case UP_KEY:
+            case this.upKey:
                 this.up = isPressed;
                 break;
-            case DOWN_KEY:
+            case this.downKey:
                 this.down = isPressed;
                 break;
-            case SPACE_KEY:
+            case this.spaceKey:
                 this.space = isPressed;
                 break;
-            case ENTER_KEY:
+            case this.enterKey:
                 this.enter = isPressed;
                 break;
         }
@@ -372,14 +378,7 @@ class NormalLaser extends Laser {
     }
 }
 
-let controller = new Controller(
-    LEFT_KEY,
-    RIGHT_KEY,
-    UP_KEY,
-    DOWN_KEY,
-    SPACE_KEY,
-    ENTER_KEY
-);
+let controller = new Controller();
 let game = new Game(controller);
 
 let intersects = (a, b) => {
