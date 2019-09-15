@@ -6,9 +6,10 @@ let elmBackground = document.getElementById("background");
 let elmHero = document.getElementById("hero");
 let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
+let elmBackToStart = document.getElementById("backToStart");
 let elmScore = document.getElementById("score");
 let elmPause = document.getElementById("pause");
-let elmHowTo = document.getElementById("howTo");
+let elmHowTo = document.getElementById("howToPage");
 // for event loop setInterval
 let t;
 
@@ -16,6 +17,7 @@ class Game {
     controller;
     match;
     startMenu;
+    afterDefeatedMenu;
     constructor(controller) {
         this.controller = controller;
         this.match = null;
@@ -26,6 +28,13 @@ class Game {
         this.startMenu[this.startMenu.length] = new StartMenuButton(
             "howToButton"
         );
+        this.afterDefeatedMenu = new Array();
+        this.afterDefeatedMenu[
+            this.afterDefeatedMenu.length
+        ] = new AfterDefeatedMenuButton("restart", true);
+        this.afterDefeatedMenu[
+            this.afterDefeatedMenu.length
+        ] = new AfterDefeatedMenuButton("backToStart");
     }
 
     start() {
@@ -33,9 +42,20 @@ class Game {
     }
 
     startMatch() {
-        document.getElementById("logo").remove();
+        if (document.getElementById("logo") !== null) {
+            View.remove("logo");
+        }
         for (let i = 0; i < this.startMenu.length; i++) {
-            View.remove(this.startMenu[i].id);
+            if (document.getElementById(this.startMenu[i].id) !== null) {
+                View.remove(this.startMenu[i].id);
+            }
+        }
+        for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
+            if (
+                document.getElementById(this.afterDefeatedMenu[i].id) !== null
+            ) {
+                View.remove(this.afterDefeatedMenu[i].id);
+            }
         }
         this.match = new Match();
         View.setVisible(elmHero);
@@ -46,13 +66,113 @@ class Game {
         for (let i = 0; i < this.startMenu.length; i++) {
             View.remove(this.startMenu[i].id);
         }
+        let elm = View.createElementInContainer("backToStart", "backToStart");
+        View.setInnerHtmlById("backToStart", "Back to Top");
+        View.addClass("backToStart", "menuFocus");
+        View.setVisible(elm);
         View.setVisible(elmHowTo);
+        View.setVisible(elmBackToStart);
     }
 
     handleControls() {
         if (this.match.ended) {
-            if (this.controller.enter) {
-                this.restart();
+            // if (this.controller.enter) {
+            //     this.restart();
+            // }
+            if (this.controller.upKeyWork && this.controller.up) {
+                console.log("upKey for after defeated");
+                this.controller.up = false;
+                disableUpKey();
+                setTimeout(function() {
+                    game.controller.upKeyWork = true;
+                }, 100);
+                console.log(
+                    "this.afterDefeatedMenu.length = " +
+                        this.afterDefeatedMenu.length
+                );
+                for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
+                    if (this.afterDefeatedMenu[i].focus) {
+                        this.afterDefeatedMenu[i].focus = false;
+                        View.removeClass(
+                            this.afterDefeatedMenu[i].id,
+                            "menuFocus"
+                        );
+                        if (i === 0) {
+                            this.afterDefeatedMenu[
+                                this.afterDefeatedMenu.length - 1
+                            ].focus = true;
+                            console.log(
+                                this.afterDefeatedMenu[
+                                    this.afterDefeatedMenu.length - 1
+                                ].id
+                            );
+                            View.addClass(
+                                this.afterDefeatedMenu[
+                                    this.afterDefeatedMenu.length - 1
+                                ].id,
+                                "menuFocus"
+                            );
+                            console.log("success");
+                        } else {
+                            this.afterDefeatedMenu[i - 1].focus = true;
+                            View.addClass(
+                                this.afterDefeatedMenu[i - 1].id,
+                                "menuFocus"
+                            );
+                            console.log("success 222");
+                        }
+                        break;
+                    }
+                }
+            } else if (this.controller.downKeyWork && this.controller.down) {
+                console.log("downKey for after defeated");
+                this.controller.down = false;
+                disableDownKey();
+                setTimeout(function() {
+                    game.controller.downKeyWork = true;
+                }, 100);
+                for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
+                    if (this.afterDefeatedMenu[i].focus) {
+                        this.afterDefeatedMenu[i].focus = false;
+                        View.removeClass(
+                            this.afterDefeatedMenu[i].id,
+                            "menuFocus"
+                        );
+                        if (i + 1 < this.afterDefeatedMenu.length) {
+                            this.afterDefeatedMenu[i + 1].focus = true;
+                            View.addClass(
+                                this.afterDefeatedMenu[i + 1].id,
+                                "menuFocus"
+                            );
+                        } else {
+                            this.afterDefeatedMenu[0].focus = true;
+                            View.addClass(
+                                this.afterDefeatedMenu[0].id,
+                                "menuFocus"
+                            );
+                        }
+                        break;
+                    }
+                }
+            } else if (this.controller.enterKeyWork && this.controller.enter) {
+                console.log("enterKey for after defeated");
+                this.controller.enter = false;
+                disableEnterKey();
+                setTimeout(function() {
+                    game.controller.enterKeyWork = true;
+                }, 100);
+                for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
+                    if (this.afterDefeatedMenu[i].focus) {
+                        if (this.afterDefeatedMenu[i].id === "restart") {
+                            this.startMatch();
+                        } else if (
+                            this.afterDefeatedMenu[i].id === "backToStart"
+                        ) {
+                            this.backToStart();
+                        }
+                        break;
+                    }
+                }
             }
         } else {
             if (this.controller.up) {
@@ -104,7 +224,7 @@ class Game {
             disableUpKey();
             setTimeout(function() {
                 game.controller.upKeyWork = true;
-            }, 200);
+            }, 100);
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
@@ -128,7 +248,7 @@ class Game {
             disableDownKey();
             setTimeout(function() {
                 game.controller.downKeyWork = true;
-            }, 200);
+            }, 100);
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
@@ -149,7 +269,7 @@ class Game {
             disableEnterKey();
             setTimeout(function() {
                 game.controller.enterKeyWork = true;
-            }, 200);
+            }, 100);
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     if (this.startMenu[i].id === "startButton") {
@@ -170,26 +290,21 @@ class Game {
             disableEnterKey();
             setTimeout(function() {
                 game.controller.enterKeyWork = true;
-            }, 200);
-            for (let i = 0; i < this.startMenu.length; i++) {
-                if (this.startMenu[i].focus) {
-                    if (this.startMenu[i].id === "startButton") {
-                        this.startMatch();
-                    } else if (this.startMenu[i].id === "howToButton") {
-                        this.openHowTo();
-                    }
-                    break;
-                }
-            }
+            }, 100);
+            View.setHidden(elmHowTo);
+            View.remove("backToStart");
         }
     }
 
     gameOver() {
+        console.log('game over');
         if (!this.match.ended) {
+            console.log('set visibility');
             this.match.ended = true;
             View.setHidden(elmHero);
             View.setVisible(elmGameOver);
             View.setVisible(elmRestart);
+            View.setVisible(elmBackToStart);
         }
     }
 
@@ -212,8 +327,27 @@ class Game {
         View.setVisible(elmHero);
         View.setHidden(elmGameOver);
         View.setHidden(elmRestart);
+        View.setHidden(elmBackToStart);
 
         this.match.iterations = 0;
+    }
+
+    backToStart() {
+        if (this.match !== null) {
+            for (let i = 0; i < this.match.enemies.length; i++) {
+                View.remove(this.match.enemies[i].id);
+            }
+            for (let i = 0; i < this.match.lasers.length; i++) {
+                View.remove(this.match.lasers[i].id);
+            }
+        }
+
+        console.log("asdfasdfffasfd");
+        this.match = null;
+        View.setHidden(elmGameOver);
+        View.setHidden(elmRestart);
+        View.setHidden(elmBackToStart);
+        // TODO show start screen
     }
 
     pause() {
@@ -222,7 +356,7 @@ class Game {
         disableShiftKey();
         setTimeout(function() {
             game.controller.shiftKeyWork = true;
-        }, 200);
+        }, 100);
         View.setVisible(elmPause);
         // TODO animation play state pause
         this.controller.shift = false;
@@ -234,7 +368,7 @@ class Game {
         disableShiftKey();
         setTimeout(function() {
             game.controller.shiftKeyWork = true;
-        }, 200);
+        }, 100);
         View.setHidden(elmPause);
         // TODO animation play state running
         this.controller.shift = false;
@@ -247,6 +381,19 @@ class StartMenuButton {
     constructor(id) {
         this.id = id;
         this.focus = false;
+    }
+}
+
+class AfterDefeatedMenuButton {
+    id;
+    focus;
+    constructor(id, bool) {
+        this.id = id;
+        if (bool !== null) {
+            this.focus = bool;
+        } else {
+            this.focus = false;
+        }
     }
 }
 
@@ -603,6 +750,8 @@ class View {
         elm.id = id;
         elm.className = className;
         document.getElementById("container").appendChild(elm);
+
+        return elm;
     }
 
     static remove(id) {
@@ -626,12 +775,16 @@ class View {
 
     static addClass(id, className) {
         let elm = document.getElementById(id);
-        elm.classList.add(className);
+        if (elm !== null) {
+            elm.classList.add(className);
+        }
     }
 
     static removeClass(id, className) {
         let elm = document.getElementById(id);
-        elm.classList.remove(className);
+        if (elm !== null) {
+            elm.classList.remove(className);
+        }
     }
 }
 
@@ -647,11 +800,8 @@ function loop() {
         // not started game yet
         let elmLogo = document.getElementById("logo");
         if (elmHowTo.style.visibility === "visible") {
-            console.log("visible");
-            // TODO put the button back to start menu
             game.howToControls();
         } else if (elmLogo === null) {
-            console.log("no elmLogo");
             View.createElementInContainer("logo", "logo");
             View.setInnerHtmlById("logo", "Space War");
             View.createElementInContainer("startButton", "startButton");
@@ -664,7 +814,6 @@ function loop() {
             View.addEventListenerToElm("howToButton", "click", openHowTo);
             game.menuControls();
         } else {
-            console.log("exist elmLogo");
             game.menuControls();
         }
     } else if (game.match.paused) {
@@ -692,6 +841,10 @@ function restart() {
     game.restart();
 }
 
+function backToStart() {
+    game.backToStart();
+}
+
 function startMatch() {
     game.startMatch();
 }
@@ -702,6 +855,7 @@ function openHowTo() {
 
 let view = new View();
 elmRestart.addEventListener("click", restart);
+elmBackToStart.addEventListener("click", backToStart);
 
 t = appSetInterval();
 

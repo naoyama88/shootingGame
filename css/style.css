@@ -62,7 +62,7 @@ body * {
     left: 100px;
     top: 280px;
     text-align: center;
-    animation: just-come-late 1.6s ease-in 0s forwards normal;
+    animation: just-come-late 1.4s ease-in 0s forwards normal;
 }
 
 .startButton:hover {
@@ -82,7 +82,7 @@ body * {
     left: 100px;
     top: 335px;
     text-align: center;
-    animation: just-come-late 1.6s ease-in 0s forwards normal;
+    animation: just-come-late 1.4s ease-in 0s forwards normal;
 }
 
 .howToButton:hover {
@@ -157,19 +157,55 @@ body * {
     width: 180px;
 }
 
-.howTo {
+.howToPage {
     color: #ff0000;
     font-size: 50px;
     position: absolute;
-    left: 160px;
-    top: 180px;
+    left: 140px;
+    top: 50px;
     visibility: hidden;
     z-index: 2;
-    width: 180px;
+    width: 250px;
+}
+
+.howToPage .explanation.howToMove {
+    position: absolute;
+    width: 400px;
+    height: 60px;
+    top:160px;
+    left: -85px;
+}
+
+.howToPage .explanation.howToPause {
+    position: absolute;
+    width: 400px;
+    height: 60px;
+    top: 245px;
+    left: -85px;
+}
+
+.howToPage .explanation > div {
+    position: absolute;
+}
+
+.howToPage .explanation .howToShoot {
+    left: 45px;
+    top: 3px;
+}
+
+.howToPage .explanation .howToMove {
+    left: 45px;
+    top: 3px;
+}
+
+.howToPage .explanation .howToPause {
+    font-size: 34px;
+    left: 45px;
+    top: 11px;
 }
 
 .restart {
-    font-size: 26px;
+    font-size: 40px;
     visibility: hidden;
     border-radius: 10px;
     line-height: 40px;
@@ -189,6 +225,22 @@ body * {
 
 .restart:focus {
     outline: 0;
+}
+
+.backToStart {
+    font-size: 40px;
+    visibility: hidden;
+    border-radius: 10px;
+    line-height: 40px;
+    width: 300px;
+    z-index: 2;
+    background-color: blue;
+    color: yellow;
+    border: none;
+    position: absolute;
+    left: 100px;
+    text-align: center;
+    top: 400px;
 }
 
 .animation-run {
@@ -245,4 +297,16 @@ body * {
     100% {
         opacity: 1;
     }
+}
+
+.explanation {
+    position: absolute;
+    background-color: #eef22a;
+}
+
+.explanation.howToShoot {
+    width: 400px;
+    height: 60px;
+    top: 70px;
+    left: -85px;
 }
