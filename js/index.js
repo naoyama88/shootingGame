@@ -8,20 +8,45 @@ let elmGameOver = document.getElementById("gameover");
 let elmRestart = document.getElementById("restart");
 let elmScore = document.getElementById("score");
 let elmPause = document.getElementById("pause");
+let elmHowTo = document.getElementById("howTo");
 // for event loop setInterval
 let t;
 
 class Game {
     controller;
     match;
+    startMenu;
     constructor(controller) {
         this.controller = controller;
         this.match = null;
+        this.startMenu = new Array();
+        this.startMenu[this.startMenu.length] = new StartMenuButton(
+            "startButton"
+        );
+        this.startMenu[this.startMenu.length] = new StartMenuButton(
+            "howToButton"
+        );
     }
 
     start() {
-        this.match = new Match();
         loop();
+    }
+
+    startMatch() {
+        document.getElementById("logo").remove();
+        for (let i = 0; i < this.startMenu.length; i++) {
+            View.remove(this.startMenu[i].id);
+        }
+        this.match = new Match();
+        View.setVisible(elmHero);
+    }
+
+    openHowTo() {
+        document.getElementById("logo").remove();
+        for (let i = 0; i < this.startMenu.length; i++) {
+            View.remove(this.startMenu[i].id);
+        }
+        View.setVisible(elmHowTo);
     }
 
     handleControls() {
@@ -68,6 +93,93 @@ class Game {
             } else {
                 this.match.paused = false;
                 this.resume();
+            }
+        }
+    }
+
+    menuControls() {
+        if (this.controller.upKeyWork && this.controller.up) {
+            console.log("upKey");
+            this.controller.up = false;
+            disableUpKey();
+            setTimeout(function() {
+                game.controller.upKeyWork = true;
+            }, 200);
+            for (let i = 0; i < this.startMenu.length; i++) {
+                if (this.startMenu[i].focus) {
+                    this.startMenu[i].focus = false;
+                    View.removeClass(this.startMenu[i].id, "menuFocus");
+                    if (i === 0) {
+                        this.startMenu[this.startMenu.length - 1].focus = true;
+                        View.addClass(
+                            this.startMenu[this.startMenu.length - 1].id,
+                            "menuFocus"
+                        );
+                    } else {
+                        this.startMenu[i - 1].focus = true;
+                        View.addClass(this.startMenu[i - 1].id, "menuFocus");
+                    }
+                    break;
+                }
+            }
+        } else if (this.controller.downKeyWork && this.controller.down) {
+            console.log("downKey");
+            this.controller.down = false;
+            disableDownKey();
+            setTimeout(function() {
+                game.controller.downKeyWork = true;
+            }, 200);
+            for (let i = 0; i < this.startMenu.length; i++) {
+                if (this.startMenu[i].focus) {
+                    this.startMenu[i].focus = false;
+                    View.removeClass(this.startMenu[i].id, "menuFocus");
+                    if (i + 1 < this.startMenu.length) {
+                        this.startMenu[i + 1].focus = true;
+                        View.addClass(this.startMenu[i + 1].id, "menuFocus");
+                    } else {
+                        this.startMenu[0].focus = true;
+                        View.addClass(this.startMenu[0].id, "menuFocus");
+                    }
+                    break;
+                }
+            }
+        } else if (this.controller.enterKeyWork && this.controller.enter) {
+            console.log("enterKey");
+            this.controller.enter = false;
+            disableEnterKey();
+            setTimeout(function() {
+                game.controller.enterKeyWork = true;
+            }, 200);
+            for (let i = 0; i < this.startMenu.length; i++) {
+                if (this.startMenu[i].focus) {
+                    if (this.startMenu[i].id === "startButton") {
+                        this.startMatch();
+                    } else if (this.startMenu[i].id === "howToButton") {
+                        this.openHowTo();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    howToControls() {
+        if (this.controller.enterKeyWork && this.controller.enter) {
+            console.log("enterKey");
+            this.controller.enter = false;
+            disableEnterKey();
+            setTimeout(function() {
+                game.controller.enterKeyWork = true;
+            }, 200);
+            for (let i = 0; i < this.startMenu.length; i++) {
+                if (this.startMenu[i].focus) {
+                    if (this.startMenu[i].id === "startButton") {
+                        this.startMatch();
+                    } else if (this.startMenu[i].id === "howToButton") {
+                        this.openHowTo();
+                    }
+                    break;
+                }
             }
         }
     }
@@ -126,6 +238,15 @@ class Game {
         View.setHidden(elmPause);
         // TODO animation play state running
         this.controller.shift = false;
+    }
+}
+
+class StartMenuButton {
+    id;
+    focus;
+    constructor(id) {
+        this.id = id;
+        this.focus = false;
     }
 }
 
@@ -220,7 +341,7 @@ class Match {
     }
 
     newLaser() {
-        if (this.createdLastLaserAt < 20) {
+        if (this.createdLastLaserAt < 3) {
             return;
         }
         this.createdLastLaserAt = 0;
@@ -308,6 +429,9 @@ class Controller {
     enter;
     shift;
     shiftKeyWork;
+    enterKeyWork;
+    upKeyWork;
+    downKeyWork;
     constructor() {
         const LEFT_KEY = 37;
         const UP_KEY = 38;
@@ -330,13 +454,10 @@ class Controller {
         this.space = false;
         this.enter = false;
         this.shift = false;
-        this.leftKeyWork = true;
-        this.rightKeyWork = true;
         this.upKeyWork = true;
         this.downKeyWork = true;
-        this.spaceKeyWork = true;
-        this.enterKeyWork = true;
         this.shiftKeyWork = true;
+        this.enterKeyWork = true;
     }
 
     toggleKey(keyCode, isPressed) {
@@ -348,16 +469,22 @@ class Controller {
                 this.right = isPressed;
                 break;
             case this.upKey:
-                this.up = isPressed;
+                if (this.upKeyWork) {
+                    this.up = isPressed;
+                }
                 break;
             case this.downKey:
-                this.down = isPressed;
+                if (this.downKeyWork) {
+                    this.down = isPressed;
+                }
                 break;
             case this.spaceKey:
                 this.space = isPressed;
                 break;
             case this.enterKey:
-                this.enter = isPressed;
+                if (this.enterKeyWork) {
+                    this.enter = isPressed;
+                }
                 break;
             case this.shiftKey:
                 if (this.shiftKeyWork) {
@@ -466,6 +593,11 @@ class View {
         elm.innerHTML = content;
     }
 
+    static setInnerHtmlById(id, content) {
+        let elm = document.getElementById(id);
+        View.setInnerHtml(elm, content);
+    }
+
     static createElementInContainer(id, className) {
         let elm = document.createElement("div");
         elm.id = id;
@@ -486,6 +618,21 @@ class View {
             elm.classList.remove("animation-run");
         }
     }
+
+    static addEventListenerToElm(id, eventName, func) {
+        let elm = document.getElementById(id);
+        elm.addEventListener(eventName, func);
+    }
+
+    static addClass(id, className) {
+        let elm = document.getElementById(id);
+        elm.classList.add(className);
+    }
+
+    static removeClass(id, className) {
+        let elm = document.getElementById(id);
+        elm.classList.remove(className);
+    }
 }
 
 class Util {
@@ -496,7 +643,31 @@ class Util {
 
 function loop() {
     const time = new Date().getTime();
-    if (game.match.paused) {
+    if (game.match === null) {
+        // not started game yet
+        let elmLogo = document.getElementById("logo");
+        if (elmHowTo.style.visibility === "visible") {
+            console.log("visible");
+            // TODO put the button back to start menu
+            game.howToControls();
+        } else if (elmLogo === null) {
+            console.log("no elmLogo");
+            View.createElementInContainer("logo", "logo");
+            View.setInnerHtmlById("logo", "Space War");
+            View.createElementInContainer("startButton", "startButton");
+            View.setInnerHtmlById("startButton", "Start");
+            View.addClass("startButton", "menuFocus");
+            View.createElementInContainer("howToButton", "howToButton");
+            View.setInnerHtmlById("howToButton", "How To Play");
+            game.startMenu[0].focus = true;
+            View.addEventListenerToElm("startButton", "click", startMatch);
+            View.addEventListenerToElm("howToButton", "click", openHowTo);
+            game.menuControls();
+        } else {
+            console.log("exist elmLogo");
+            game.menuControls();
+        }
+    } else if (game.match.paused) {
         game.shiftKeyControls();
     } else if (time - game.match.lastLoopRun > 40) {
         game.match.updatePosition();
@@ -521,6 +692,14 @@ function restart() {
     game.restart();
 }
 
+function startMatch() {
+    game.startMatch();
+}
+
+function openHowTo() {
+    game.openHowTo();
+}
+
 let view = new View();
 elmRestart.addEventListener("click", restart);
 
@@ -532,6 +711,18 @@ function appSetInterval() {
 
 function disableShiftKey() {
     game.controller.shiftKeyWork = false;
+}
+
+function disableEnterKey() {
+    game.controller.enterKeyWork = false;
+}
+
+function disableUpKey() {
+    game.controller.upKeyWork = false;
+}
+
+function disableDownKey() {
+    game.controller.downKeyWork = false;
 }
 
 game.ended = false;
