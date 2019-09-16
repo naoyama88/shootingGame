@@ -168,20 +168,98 @@ body * {
     width: 250px;
 }
 
-.howToPage .explanation.howToMove {
+.howToPage .explanation {
     position: absolute;
+    background-color: #eef22a;
     width: 400px;
     height: 60px;
+}
+
+.howToPage .explanation.howToShoot {
+    top: 70px;
+    left: -85px;
+}
+
+.howToPage .explanation.howToShoot:before {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
+    position: absolute;
+    height: 60px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+.howToPage .explanation.howToShoot:after {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
+    height: 60px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+
+.howToPage .explanation.howToMove {
     top:160px;
     left: -85px;
 }
 
-.howToPage .explanation.howToPause {
+.howToPage .explanation.howToMove:before {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
     position: absolute;
-    width: 400px;
     height: 60px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+.howToPage .explanation.howToMove:after {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
+    height: 60px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+.howToPage .explanation.howToPause {
+    width: 440px;
     top: 245px;
-    left: -85px;
+    left: -105px;
+    height: 66px;
+}
+
+.howToPage .explanation.howToPause:before {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
+    position: absolute;
+    height: 66px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+.howToPage .explanation.howToPause:after {
+    content: "";
+    background-color: #eef22a;
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
+    height: 66px;
+    width: 5px;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
 }
 
 .howToPage .explanation > div {
@@ -199,9 +277,9 @@ body * {
 }
 
 .howToPage .explanation .howToPause {
-    font-size: 34px;
-    left: 45px;
-    top: 11px;
+    font-size: 45px;
+    left: 11px;
+    top: 8px;
 }
 
 .playAgain {
@@ -306,16 +384,4 @@ body * {
     100% {
         opacity: 1;
     }
-}
-
-.explanation {
-    position: absolute;
-    background-color: #eef22a;
-}
-
-.explanation.howToShoot {
-    width: 400px;
-    height: 60px;
-    top: 70px;
-    left: -85px;
 }

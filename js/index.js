@@ -15,7 +15,7 @@ const ID_HOWTOPLAYBUTTON = "howToButton";
 
 const CLASS_MENUFOCUS = "menuFocus";
 
-// will be delete
+// will be deleted
 const ID_LOGO = "logo";
 
 const HERO_MOVEMENT = 10;
@@ -38,21 +38,15 @@ class Game {
         this.controller = controller;
         this.match = null;
         this.startMenu = new Array();
-        this.startMenu[this.startMenu.length] = new StartMenuButton(
-            ID_STARTBUTTON,
-            true
-        );
-        this.startMenu[this.startMenu.length] = new StartMenuButton(
-            ID_HOWTOPLAYBUTTON,
-            false
-        );
+        let startBtn = new StartMenuButton(ID_STARTBUTTON, true);
+        let howToPlayBtn = new StartMenuButton(ID_HOWTOPLAYBUTTON, false);
+        this.startMenu.push(startBtn);
+        this.startMenu.push(howToPlayBtn);
         this.afterDefeatedMenu = new Array();
-        this.afterDefeatedMenu[
-            this.afterDefeatedMenu.length
-        ] = new AfterDefeatedMenuButton(ID_PLAYAGAIN, true);
-        this.afterDefeatedMenu[
-            this.afterDefeatedMenu.length
-        ] = new AfterDefeatedMenuButton(ID_BACKTOSTART, false);
+        let playAgainBtn = new AfterDefeatedMenuButton(ID_PLAYAGAIN, true);
+        let backToStartBtn = new AfterDefeatedMenuButton(ID_BACKTOSTART, false);
+        this.afterDefeatedMenu.push(playAgainBtn);
+        this.afterDefeatedMenu.push(backToStartBtn);
     }
 
     start() {
@@ -60,17 +54,20 @@ class Game {
     }
 
     startMatch() {
+        // remove
         this.removeStartLogo();
         this.removeAllStartMenu();
         this.removeAllMenuOnAfterDefeatedScreen();
-
+        // create
         this.match = new Match();
         this.createScore();
         this.createHero();
     }
 
     openHowToPlayScreen() {
+        // remove
         this.removeStartScreen();
+        // create
         this.createHowToScreen();
     }
 
@@ -78,10 +75,7 @@ class Game {
         if (this.match.ended) {
             if (this.controller.upKeyWork && this.controller.up) {
                 this.controller.up = false;
-                disableUpKey();
-                setTimeout(function() {
-                    game.controller.upKeyWork = true;
-                }, 100);
+                this.disableUpKey();
                 for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
                     if (this.afterDefeatedMenu[i].focus) {
                         this.afterDefeatedMenu[i].focus = false;
@@ -111,10 +105,7 @@ class Game {
                 }
             } else if (this.controller.downKeyWork && this.controller.down) {
                 this.controller.down = false;
-                disableDownKey();
-                setTimeout(function() {
-                    game.controller.downKeyWork = true;
-                }, 100);
+                this.disableDownKey();
                 for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
                     if (this.afterDefeatedMenu[i].focus) {
                         this.afterDefeatedMenu[i].focus = false;
@@ -140,10 +131,7 @@ class Game {
                 }
             } else if (this.controller.enterKeyWork && this.controller.enter) {
                 this.controller.enter = false;
-                disableEnterKey();
-                setTimeout(function() {
-                    game.controller.enterKeyWork = true;
-                }, 100);
+                this.disableEnterKey();
                 for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
                     if (this.afterDefeatedMenu[i].focus) {
                         if (this.afterDefeatedMenu[i].id === ID_PLAYAGAIN) {
@@ -203,10 +191,7 @@ class Game {
     menuControls() {
         if (this.controller.upKeyWork && this.controller.up) {
             this.controller.up = false;
-            disableUpKey();
-            setTimeout(function() {
-                game.controller.upKeyWork = true;
-            }, 100);
+            this.disableUpKey();
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
@@ -229,10 +214,7 @@ class Game {
             }
         } else if (this.controller.downKeyWork && this.controller.down) {
             this.controller.down = false;
-            disableDownKey();
-            setTimeout(function() {
-                game.controller.downKeyWork = true;
-            }, 100);
+            this.disableDownKey();
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
@@ -252,10 +234,7 @@ class Game {
             }
         } else if (this.controller.enterKeyWork && this.controller.enter) {
             this.controller.enter = false;
-            disableEnterKey();
-            setTimeout(function() {
-                game.controller.enterKeyWork = true;
-            }, 100);
+            this.disableEnterKey();
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     if (this.startMenu[i].id === ID_STARTBUTTON) {
@@ -271,10 +250,7 @@ class Game {
 
     howToControls() {
         if (this.controller.enterKeyWork && this.controller.enter) {
-            disableEnterKey();
-            setTimeout(function() {
-                game.controller.enterKeyWork = true;
-            }, 100);
+            this.disableEnterKey();
             this.controller.enter = false;
             this.removeHowToScreen();
             this.createStartScreen();
@@ -286,7 +262,9 @@ class Game {
     gameOver() {
         if (!this.match.ended) {
             this.match.ended = true;
+            // remove
             this.removeHero();
+            // create
             this.createGameOverLogo();
             this.createPlayAgainButton();
             this.createBackToStartButton(true);
@@ -299,7 +277,6 @@ class Game {
         this.removeAllLasers();
         this.removeGameOverLogo();
         this.removeAllMenuOnAfterDefeatedScreen();
-
         // create
         this.match = new Match();
         this.initHero();
@@ -317,10 +294,7 @@ class Game {
     pause() {
         this.match.paused = true;
         View.setAnimationPlayState(elmBackground, false);
-        disableShiftKey();
-        setTimeout(function() {
-            game.controller.shiftKeyWork = true;
-        }, 100);
+        this.disableShiftKey();
         View.setVisible(elmPause);
         // TODO animation play state pause
         this.controller.shift = false;
@@ -329,10 +303,7 @@ class Game {
     resume() {
         this.match.paused = false;
         View.setAnimationPlayState(elmBackground, true);
-        disableShiftKey();
-        setTimeout(function() {
-            game.controller.shiftKeyWork = true;
-        }, 100);
+        this.disableShiftKey();
         View.setHidden(elmPause);
         // TODO animation play state running
         this.controller.shift = false;
@@ -520,6 +491,34 @@ class Game {
         );
         View.setVisible(elmHero);
     }
+
+    disableShiftKey(ms = 100) {
+        this.controller.shiftKeyWork = false;
+        setTimeout(function() {
+            game.controller.shiftKeyWork = true;
+        }, ms);
+    }
+
+    disableEnterKey(ms = 100) {
+        this.controller.enterKeyWork = false;
+        setTimeout(function() {
+            game.controller.enterKeyWork = true;
+        }, ms);
+    }
+
+    disableUpKey(ms = 100) {
+        this.controller.upKeyWork = false;
+        setTimeout(function() {
+            game.controller.upKeyWork = true;
+        }, ms);
+    }
+
+    disableDownKey(ms = 100) {
+        this.controller.downKeyWork = false;
+        setTimeout(function() {
+            game.controller.downKeyWork = true;
+        }, ms);
+    }
 }
 
 class StartMenuButton {
@@ -560,6 +559,7 @@ class Match {
     enemies;
     lasers;
     hero;
+    laserLevel;
     createdLastLaserAt;
     paused;
     constructor() {
@@ -578,6 +578,7 @@ class Match {
         this.enemies = new Array();
         this.lasers = new Array();
         this.hero = new Hero((this.right - this.left) / 2, this.bottom);
+        this.laserLevel = 1;
         this.createdLastLaserAt = 0;
         this.paused = false;
     }
@@ -639,7 +640,12 @@ class Match {
     }
 
     newLaser() {
-        if (this.createdLastLaserAt < 3) {
+        let laserSec = 3;
+        if (this.laserLevel === 1) {
+            // TODO set Level
+            laserSec = 3;
+        }
+        if (this.createdLastLaserAt < laserSec) {
             return;
         }
         this.createdLastLaserAt = 0;
@@ -998,26 +1004,26 @@ function openHowToPlayScreen() {
 
 let view = new View();
 
-t = appSetInterval();
+t = setLoop();
 
-function appSetInterval() {
+function setLoop() {
     return setInterval("loop()", 20);
 }
 
 function disableShiftKey() {
-    game.controller.shiftKeyWork = false;
+    game.disableShiftKey();
 }
 
 function disableEnterKey() {
-    game.controller.enterKeyWork = false;
+    game.disableEnterKey();
 }
 
 function disableUpKey() {
-    game.controller.upKeyWork = false;
+    game.disableUpKey();
 }
 
 function disableDownKey() {
-    game.controller.downKeyWork = false;
+    game.disableDownKey();
 }
 
 game.ended = false;
