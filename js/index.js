@@ -1,15 +1,31 @@
 "use strict";
 
+const ID_CONTAINER = "container";
+const ID_BACKGROUND = "background";
+const ID_HERO = "hero";
+const ID_SCORE = "score";
+const ID_PAUSE = "pause";
+const ID_GAMEOVER = "gameover";
+const ID_HOWTOPAGE = "howToPage";
+
+const ID_STARTBUTTON = "startButton";
+const ID_BACKTOSTART = "backToStart";
+const ID_PLAYAGAIN = "playAgain";
+const ID_HOWTOPLAYBUTTON = "howToButton";
+
+const CLASS_MENUFOCUS = "menuFocus";
+
+// will be delete
+const ID_LOGO = "logo";
+
 const HERO_MOVEMENT = 10;
 const BASIC_SCORE_POINT = 100;
-let elmBackground = document.getElementById("background");
-let elmHero = document.getElementById("hero");
-let elmGameOver = document.getElementById("gameover");
-let elmRestart = document.getElementById("restart");
-let elmBackToStart = document.getElementById("backToStart");
-let elmScore = document.getElementById("score");
-let elmPause = document.getElementById("pause");
-let elmHowTo = document.getElementById("howToPage");
+let elmBackground = document.getElementById(ID_BACKGROUND);
+let elmHero = document.getElementById(ID_HERO);
+let elmGameOver = document.getElementById(ID_GAMEOVER);
+let elmScore = document.getElementById(ID_SCORE);
+let elmPause = document.getElementById(ID_PAUSE);
+let elmHowTo = document.getElementById(ID_HOWTOPAGE);
 // for event loop setInterval
 let t;
 
@@ -23,18 +39,20 @@ class Game {
         this.match = null;
         this.startMenu = new Array();
         this.startMenu[this.startMenu.length] = new StartMenuButton(
-            "startButton"
+            ID_STARTBUTTON,
+            true
         );
         this.startMenu[this.startMenu.length] = new StartMenuButton(
-            "howToButton"
+            ID_HOWTOPLAYBUTTON,
+            false
         );
         this.afterDefeatedMenu = new Array();
         this.afterDefeatedMenu[
             this.afterDefeatedMenu.length
-        ] = new AfterDefeatedMenuButton("restart", true);
+        ] = new AfterDefeatedMenuButton(ID_PLAYAGAIN, true);
         this.afterDefeatedMenu[
             this.afterDefeatedMenu.length
-        ] = new AfterDefeatedMenuButton("backToStart");
+        ] = new AfterDefeatedMenuButton(ID_BACKTOSTART, false);
     }
 
     start() {
@@ -42,90 +60,56 @@ class Game {
     }
 
     startMatch() {
-        if (document.getElementById("logo") !== null) {
-            View.remove("logo");
-        }
-        for (let i = 0; i < this.startMenu.length; i++) {
-            if (document.getElementById(this.startMenu[i].id) !== null) {
-                View.remove(this.startMenu[i].id);
-            }
-        }
-        for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
-            if (
-                document.getElementById(this.afterDefeatedMenu[i].id) !== null
-            ) {
-                View.remove(this.afterDefeatedMenu[i].id);
-            }
-        }
+        this.removeStartLogo();
+        this.removeAllStartMenu();
+        this.removeAllMenuOnAfterDefeatedScreen();
+
         this.match = new Match();
-        View.setVisible(elmHero);
+        this.createScore();
+        this.createHero();
     }
 
-    openHowTo() {
-        document.getElementById("logo").remove();
-        for (let i = 0; i < this.startMenu.length; i++) {
-            View.remove(this.startMenu[i].id);
-        }
-        let elm = View.createElementInContainer("backToStart", "backToStart");
-        View.setInnerHtmlById("backToStart", "Back to Top");
-        View.addClass("backToStart", "menuFocus");
-        View.setVisible(elm);
-        View.setVisible(elmHowTo);
-        View.setVisible(elmBackToStart);
+    openHowToPlayScreen() {
+        this.removeStartScreen();
+        this.createHowToScreen();
     }
 
     handleControls() {
         if (this.match.ended) {
-            // if (this.controller.enter) {
-            //     this.restart();
-            // }
             if (this.controller.upKeyWork && this.controller.up) {
-                console.log("upKey for after defeated");
                 this.controller.up = false;
                 disableUpKey();
                 setTimeout(function() {
                     game.controller.upKeyWork = true;
                 }, 100);
-                console.log(
-                    "this.afterDefeatedMenu.length = " +
-                        this.afterDefeatedMenu.length
-                );
                 for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
                     if (this.afterDefeatedMenu[i].focus) {
                         this.afterDefeatedMenu[i].focus = false;
                         View.removeClass(
                             this.afterDefeatedMenu[i].id,
-                            "menuFocus"
+                            CLASS_MENUFOCUS
                         );
                         if (i === 0) {
                             this.afterDefeatedMenu[
                                 this.afterDefeatedMenu.length - 1
                             ].focus = true;
-                            console.log(
-                                this.afterDefeatedMenu[
-                                    this.afterDefeatedMenu.length - 1
-                                ].id
-                            );
                             View.addClass(
                                 this.afterDefeatedMenu[
                                     this.afterDefeatedMenu.length - 1
                                 ].id,
-                                "menuFocus"
+                                CLASS_MENUFOCUS
                             );
-                            console.log("success");
                         } else {
                             this.afterDefeatedMenu[i - 1].focus = true;
                             View.addClass(
                                 this.afterDefeatedMenu[i - 1].id,
-                                "menuFocus"
+                                CLASS_MENUFOCUS
                             );
-                            console.log("success 222");
                         }
                         break;
                     }
                 }
             } else if (this.controller.downKeyWork && this.controller.down) {
-                console.log("downKey for after defeated");
                 this.controller.down = false;
                 disableDownKey();
                 setTimeout(function() {
@@ -136,26 +120,25 @@ class Game {
                         this.afterDefeatedMenu[i].focus = false;
                         View.removeClass(
                             this.afterDefeatedMenu[i].id,
-                            "menuFocus"
+                            CLASS_MENUFOCUS
                         );
                         if (i + 1 < this.afterDefeatedMenu.length) {
                             this.afterDefeatedMenu[i + 1].focus = true;
                             View.addClass(
                                 this.afterDefeatedMenu[i + 1].id,
-                                "menuFocus"
+                                CLASS_MENUFOCUS
                             );
                         } else {
                             this.afterDefeatedMenu[0].focus = true;
                             View.addClass(
                                 this.afterDefeatedMenu[0].id,
-                                "menuFocus"
+                                CLASS_MENUFOCUS
                             );
                         }
                         break;
                     }
                 }
             } else if (this.controller.enterKeyWork && this.controller.enter) {
-                console.log("enterKey for after defeated");
                 this.controller.enter = false;
                 disableEnterKey();
                 setTimeout(function() {
@@ -163,10 +146,10 @@ class Game {
                 }, 100);
                 for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
                     if (this.afterDefeatedMenu[i].focus) {
-                        if (this.afterDefeatedMenu[i].id === "restart") {
-                            this.startMatch();
+                        if (this.afterDefeatedMenu[i].id === ID_PLAYAGAIN) {
+                            this.playAgain();
                         } else if (
-                            this.afterDefeatedMenu[i].id === "backToStart"
+                            this.afterDefeatedMenu[i].id === ID_BACKTOSTART
                         ) {
                             this.backToStart();
                         }
@@ -219,7 +202,6 @@ class Game {
 
     menuControls() {
         if (this.controller.upKeyWork && this.controller.up) {
-            console.log("upKey");
             this.controller.up = false;
             disableUpKey();
             setTimeout(function() {
@@ -228,22 +210,21 @@ class Game {
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
-                    View.removeClass(this.startMenu[i].id, "menuFocus");
+                    View.removeClass(this.startMenu[i].id, CLASS_MENUFOCUS);
                     if (i === 0) {
                         this.startMenu[this.startMenu.length - 1].focus = true;
                         View.addClass(
                             this.startMenu[this.startMenu.length - 1].id,
-                            "menuFocus"
+                            CLASS_MENUFOCUS
                         );
                     } else {
                         this.startMenu[i - 1].focus = true;
-                        View.addClass(this.startMenu[i - 1].id, "menuFocus");
+                        View.addClass(this.startMenu[i - 1].id, CLASS_MENUFOCUS);
                     }
                     break;
                 }
             }
         } else if (this.controller.downKeyWork && this.controller.down) {
-            console.log("downKey");
             this.controller.down = false;
             disableDownKey();
             setTimeout(function() {
@@ -252,19 +233,18 @@ class Game {
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
                     this.startMenu[i].focus = false;
-                    View.removeClass(this.startMenu[i].id, "menuFocus");
+                    View.removeClass(this.startMenu[i].id, CLASS_MENUFOCUS);
                     if (i + 1 < this.startMenu.length) {
                         this.startMenu[i + 1].focus = true;
-                        View.addClass(this.startMenu[i + 1].id, "menuFocus");
+                        View.addClass(this.startMenu[i + 1].id, CLASS_MENUFOCUS);
                     } else {
                         this.startMenu[0].focus = true;
-                        View.addClass(this.startMenu[0].id, "menuFocus");
+                        View.addClass(this.startMenu[0].id, CLASS_MENUFOCUS);
                     }
                     break;
                 }
             }
         } else if (this.controller.enterKeyWork && this.controller.enter) {
-            console.log("enterKey");
             this.controller.enter = false;
             disableEnterKey();
             setTimeout(function() {
@@ -272,10 +252,10 @@ class Game {
             }, 100);
             for (let i = 0; i < this.startMenu.length; i++) {
                 if (this.startMenu[i].focus) {
-                    if (this.startMenu[i].id === "startButton") {
+                    if (this.startMenu[i].id === ID_STARTBUTTON) {
                         this.startMatch();
-                    } else if (this.startMenu[i].id === "howToButton") {
-                        this.openHowTo();
+                    } else if (this.startMenu[i].id === ID_HOWTOPLAYBUTTON) {
+                        this.openHowToPlayScreen();
                     }
                     break;
                 }
@@ -285,69 +265,48 @@ class Game {
 
     howToControls() {
         if (this.controller.enterKeyWork && this.controller.enter) {
-            console.log("enterKey");
-            this.controller.enter = false;
             disableEnterKey();
             setTimeout(function() {
                 game.controller.enterKeyWork = true;
             }, 100);
-            View.setHidden(elmHowTo);
-            View.remove("backToStart");
+            this.controller.enter = false;
+            this.removeHowToScreen();
+            this.createStartScreen();
+
+
+            this.backToStart();
         }
     }
 
     gameOver() {
-        console.log('game over');
         if (!this.match.ended) {
-            console.log('set visibility');
             this.match.ended = true;
-            View.setHidden(elmHero);
-            View.setVisible(elmGameOver);
-            View.setVisible(elmRestart);
-            View.setVisible(elmBackToStart);
+            this.removeHero();
+            this.createGameOverLogo();
+            this.createPlayAgainButton();
+            this.createBackToStartButton(true);
         }
     }
 
-    restart() {
-        if (this.match !== null) {
-            for (let i = 0; i < this.match.enemies.length; i++) {
-                View.remove(this.match.enemies[i].id);
-            }
-            for (let i = 0; i < this.match.lasers.length; i++) {
-                View.remove(this.match.lasers[i].id);
-            }
-        }
+    playAgain() {
+        // remove
+        this.removeAllEnemies();
+        this.removeAllLasers();
+        this.removeGameOverLogo();
+        this.removeAllMenuOnAfterDefeatedScreen();
 
+        // create
         this.match = new Match();
-        View.setPosition(
-            this.match.hero.id,
-            this.match.hero.x,
-            this.match.hero.y
-        );
-        View.setVisible(elmHero);
-        View.setHidden(elmGameOver);
-        View.setHidden(elmRestart);
-        View.setHidden(elmBackToStart);
-
-        this.match.iterations = 0;
+        this.initHero();
     }
 
     backToStart() {
-        if (this.match !== null) {
-            for (let i = 0; i < this.match.enemies.length; i++) {
-                View.remove(this.match.enemies[i].id);
-            }
-            for (let i = 0; i < this.match.lasers.length; i++) {
-                View.remove(this.match.lasers[i].id);
-            }
-        }
-
-        console.log("asdfasdfffasfd");
-        this.match = null;
-        View.setHidden(elmGameOver);
-        View.setHidden(elmRestart);
-        View.setHidden(elmBackToStart);
-        // TODO show start screen
+        // remove
+        this.removeMatchScreen();
+        this.removeGameOverScreen();
+        this.removeHowToScreen();
+        // create
+        this.createStartScreen();
     }
 
     pause() {
@@ -373,14 +332,192 @@ class Game {
         // TODO animation play state running
         this.controller.shift = false;
     }
+
+    createStartScreen() {
+        // logo
+        this.createStartLogo();
+        // start button
+        this.createStartButton(true);
+        // how to button
+        this.createHowToButton(false);
+        // focus on first button
+        game.startMenu[0].focus = true;
+    }
+
+    createStartLogo() {
+        let elm = View.createElementInContainer(ID_LOGO, ID_LOGO);
+        View.setInnerHtmlById(ID_LOGO, "Space War");
+
+        return elm;
+    }
+
+    createStartButton(isFocused) {
+        let elm = View.createElementInContainer(ID_STARTBUTTON, ID_STARTBUTTON);
+        View.setInnerHtmlById(ID_STARTBUTTON, "Start");
+        View.addEventListenerToElm(ID_STARTBUTTON, "click", startMatch);
+        if (isFocused) {
+            View.addClass(ID_STARTBUTTON, CLASS_MENUFOCUS);
+        }
+
+        return elm;
+    }
+
+    createHowToButton(isFocused) {
+        let elm = View.createElementInContainer(ID_HOWTOPLAYBUTTON, ID_HOWTOPLAYBUTTON);
+        View.setInnerHtmlById(ID_HOWTOPLAYBUTTON, "How To Play");
+        View.addEventListenerToElm(ID_HOWTOPLAYBUTTON, "click", openHowToPlayScreen);
+        if (isFocused) {
+            View.addClass(ID_HOWTOPLAYBUTTON, CLASS_MENUFOCUS);
+        }
+
+        return elm;
+    }
+
+    createBackToStartButton(isFocused) {
+        let elm = View.createElementInContainer(ID_BACKTOSTART, ID_BACKTOSTART);
+        View.addEventListenerToElm(ID_BACKTOSTART, "click", backToStart);
+        View.setInnerHtmlById(ID_BACKTOSTART, "Back To Start");
+        if (isFocused) {
+            View.addClass(ID_BACKTOSTART, CLASS_MENUFOCUS);
+        }
+
+        return elm;
+    }
+
+    createPlayAgainButton() {
+        View.createElementInContainer(ID_PLAYAGAIN, ID_PLAYAGAIN);
+        View.setInnerHtmlById(ID_PLAYAGAIN, "Play Again");
+        View.addClass(ID_PLAYAGAIN, CLASS_MENUFOCUS);
+        View.addEventListenerToElm(ID_PLAYAGAIN, "click", playAgain);
+    }
+
+    removeBackToStartButton() {
+        View.remove(ID_BACKTOSTART);
+    }
+
+    removeStartScreen() {
+        console.log("game.removeStartScreen()");
+        if (document.getElementById(ID_LOGO) !== null) {
+            View.remove(ID_LOGO);
+        }
+        this.removeAllStartMenu();
+    }
+
+    removeHowToScreen() {
+        console.log("game.removeHowToScreen()");
+        this.removeHowToPlayExplanation();
+        this.removeBackToStartButton();
+    }
+
+    removeMatchScreen() {
+        this.removeScore();
+        this.removeAllEnemies();
+        this.removeAllLasers();
+        this.match = null;
+    }
+
+    removeGameOverScreen() {
+        this.removeGameOverLogo();
+        this.removeAllMenuOnAfterDefeatedScreen();
+    }
+
+    removeHero() {
+        View.setHidden(elmHero);
+    }
+
+    createHowToScreen() {
+        console.log("game.createHowToScreen()");
+        View.setVisible(elmHowTo);
+        this.createBackToStartButton(true);
+    }
+
+    removeScore() {
+        View.setHidden(elmScore);
+    }
+
+    removeAllEnemies() {
+        if (this.match !== null) {
+            for (let i = 0; i < this.match.enemies.length; i++) {
+                console.log("remove id = " + this.match.enemies[i].id);
+                View.remove(this.match.enemies[i].id);
+            }
+        }
+    }
+
+    removeAllLasers() {
+        if (this.match !== null) {
+            for (let i = 0; i < this.match.lasers.length; i++) {
+                console.log("remove id = " + this.match.lasers[i].id);
+                View.remove(this.match.lasers[i].id);
+            }
+        }
+    }
+
+    removeStartLogo() {
+        if (document.getElementById(ID_LOGO) !== null) {
+            console.log("remove logo");
+            View.remove(ID_LOGO);
+        }
+    }
+
+    removeAllStartMenu() {
+        for (let i = 0; i < this.startMenu.length; i++) {
+            if (document.getElementById(this.startMenu[i].id) !== null) {
+                console.log("remove id = " + this.startMenu[i].id);
+                View.remove(this.startMenu[i].id);
+            }
+        }
+    }
+
+    createGameOverLogo() {
+        View.setVisible(elmGameOver);
+    }
+
+    removeGameOverLogo() {
+        View.setHidden(elmGameOver);
+    }
+
+    removeHowToPlayExplanation() {
+        console.log('game.removeHowToPlayExplanation()');
+        View.setHidden(elmHowTo);
+    }
+
+    removeAllMenuOnAfterDefeatedScreen() {
+        for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
+            if (document.getElementById(this.afterDefeatedMenu[i].id) !== null) {
+                View.remove(this.afterDefeatedMenu[i].id);
+            }
+        }
+    }
+
+    createScore() {
+        View.setVisible(elmScore);
+    }
+
+    createHero() {
+        View.setVisible(elmHero);
+    }
+
+    initHero() {
+        View.setPosition(
+            this.match.hero.id,
+            this.match.hero.x,
+            this.match.hero.y
+        );
+        View.setVisible(elmHero);
+    }
 }
 
 class StartMenuButton {
     id;
     focus;
-    constructor(id) {
+    constructor(id, bool) {
         this.id = id;
-        this.focus = false;
+        if (bool !== null) {
+            this.focus = bool;
+        } else {
+            this.focus = false;
+        }
     }
 }
 
@@ -661,7 +798,7 @@ class Hero extends Sprite {
     constructor(x, bottom) {
         const W = 20;
         const H = 20;
-        super("hero", x - W / 2, bottom - H, W, H);
+        super(ID_HERO, x - W / 2, bottom - H, W, H);
     }
 }
 
@@ -798,20 +935,11 @@ function loop() {
     const time = new Date().getTime();
     if (game.match === null) {
         // not started game yet
-        let elmLogo = document.getElementById("logo");
+        let elmLogo = document.getElementById(ID_LOGO);
         if (elmHowTo.style.visibility === "visible") {
             game.howToControls();
         } else if (elmLogo === null) {
-            View.createElementInContainer("logo", "logo");
-            View.setInnerHtmlById("logo", "Space War");
-            View.createElementInContainer("startButton", "startButton");
-            View.setInnerHtmlById("startButton", "Start");
-            View.addClass("startButton", "menuFocus");
-            View.createElementInContainer("howToButton", "howToButton");
-            View.setInnerHtmlById("howToButton", "How To Play");
-            game.startMenu[0].focus = true;
-            View.addEventListenerToElm("startButton", "click", startMatch);
-            View.addEventListenerToElm("howToButton", "click", openHowTo);
+            game.createStartScreen();
             game.menuControls();
         } else {
             game.menuControls();
@@ -837,8 +965,8 @@ function loop() {
     }
 }
 
-function restart() {
-    game.restart();
+function playAgain() {
+    game.playAgain();
 }
 
 function backToStart() {
@@ -846,16 +974,15 @@ function backToStart() {
 }
 
 function startMatch() {
+    // press Start
     game.startMatch();
 }
 
-function openHowTo() {
-    game.openHowTo();
+function openHowToPlayScreen() {
+    game.openHowToPlayScreen();
 }
 
 let view = new View();
-elmRestart.addEventListener("click", restart);
-elmBackToStart.addEventListener("click", backToStart);
 
 t = appSetInterval();
 
