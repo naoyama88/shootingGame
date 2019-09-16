@@ -7,11 +7,13 @@ const ID_SCORE = "score";
 const ID_PAUSE = "pause";
 const ID_GAMEOVER = "gameover";
 const ID_HOWTOPAGE = "howToPage";
+const ID_RECORDPAGE = "recordPage";
 
 const ID_STARTBUTTON = "startButton";
 const ID_BACKTOSTART = "backToStart";
 const ID_PLAYAGAIN = "playAgain";
 const ID_HOWTOPLAYBUTTON = "howToButton";
+const ID_RECORDBUTTON = "recordButton";
 
 const CLASS_MENUFOCUS = "menuFocus";
 
@@ -28,19 +30,30 @@ class Game {
     match;
     startMenu;
     afterDefeatedMenu;
+    scores;
     constructor(controller) {
         this.controller = controller;
         this.match = null;
         this.startMenu = new Array();
         let startBtn = new StartMenuButton(ID_STARTBUTTON, true);
         let howToPlayBtn = new StartMenuButton(ID_HOWTOPLAYBUTTON, false);
+        let recordBtn = new StartMenuButton(ID_RECORDBUTTON, false);
         this.startMenu.push(startBtn);
         this.startMenu.push(howToPlayBtn);
+        this.startMenu.push(recordBtn);
         this.afterDefeatedMenu = new Array();
         let playAgainBtn = new AfterDefeatedMenuButton(ID_PLAYAGAIN, true);
         let backToStartBtn = new AfterDefeatedMenuButton(ID_BACKTOSTART, false);
         this.afterDefeatedMenu.push(playAgainBtn);
         this.afterDefeatedMenu.push(backToStartBtn);
+
+        this.scores = new Array();
+        // TODO add real score instead of sample
+        this.scores.push(23000);
+        this.scores.push(22000);
+        this.scores.push(21000);
+        this.scores.push(20000);
+        this.scores.push(19000);
     }
 
     start() {
@@ -69,6 +82,14 @@ class Game {
         this.createHowToScreen();
     }
 
+    moveToRecordScreen() {
+        console.log('moveToRecordScreen()');
+        // remove
+        this.removeStartScreen();
+        // create
+        this.createRecordScreen();
+    }
+
     moveToDefeatedScreen() {
         console.log('moveToDefeatedScreen()');
         // remove
@@ -89,11 +110,13 @@ class Game {
         const time = new Date().getTime();
         if (this.match === null) {
             // not started game yet
-            if (!View.exist(ID_LOGO) && !View.exist(ID_HOWTOPAGE)) {
+            if (!View.exist(ID_LOGO) && !View.exist(ID_HOWTOPAGE) && !View.exist(ID_RECORDPAGE)) {
                 this.createStartScreen();
                 this.menuControls();
-            } else if (!View.exist(ID_LOGO) && View.exist(ID_HOWTOPAGE)) {
+            } else if (!View.exist(ID_LOGO) && View.exist(ID_HOWTOPAGE) && !View.exist(ID_RECORDPAGE)) {
                 this.howToControls();
+            } else if (!View.exist(ID_LOGO) && !View.exist(ID_HOWTOPAGE) && View.exist(ID_RECORDPAGE)) {
+                this.howToControls(); // TODO should I make new controlls for this?
             } else {
                 this.menuControls();
             }
@@ -284,6 +307,8 @@ class Game {
                         this.startMatch();
                     } else if (this.startMenu[i].id === ID_HOWTOPLAYBUTTON) {
                         this.moveToHowToPlayScreen();
+                    } else if (this.startMenu[i].id === ID_RECORDBUTTON) {
+                        this.moveToRecordScreen();
                     }
                     break;
                 }
@@ -304,12 +329,15 @@ class Game {
         console.log('gameOver()');
         if (!this.match.ended) {
             this.match.ended = true;
+
+            this.updateScore();
+
             // remove
             this.removeHero();
             // create
             this.createGameOverLogo();
             this.createPlayAgainButton();
-            this.createBackToStartButton(true);
+            this.createBackToStartButton();
         }
     }
 
@@ -331,6 +359,7 @@ class Game {
         this.removeMatchScreen();
         this.removeGameOverScreen();
         this.removeHowToScreen();
+        this.removeRecordScreen();
         // create
         this.createStartScreen();
     }
@@ -362,6 +391,8 @@ class Game {
         this.createStartButton(true);
         // how to button
         this.createHowToButton(false);
+        // record button
+        this.createRecordButton(false);
         // focus on first button
         game.startMenu[0].focus = true;
     }
@@ -397,9 +428,25 @@ class Game {
         }
     }
 
+    createRecordButton(isFocused) {
+        console.log('createRecordButton()');
+        View.createElementInContainer(ID_RECORDBUTTON, ID_RECORDBUTTON);
+        View.setInnerHtmlById(ID_RECORDBUTTON, "Record");
+        View.addEventListenerToElm(ID_RECORDBUTTON, "click", function() {
+            game.moveToRecordScreen();
+        });
+
+        if (isFocused) {
+            View.addClass(ID_RECORDBUTTON, CLASS_MENUFOCUS);
+        }
+    }
+
     createBackToStartButton(isFocused) {
         console.log('createBackToStartButton()');
         View.createElementInContainer(ID_BACKTOSTART, ID_BACKTOSTART);
+        if (isFocused) {
+            View.addClass(ID_BACKTOSTART, CLASS_MENUFOCUS);
+        }
         View.addEventListenerToElm(ID_BACKTOSTART, "click", function() {
             game.backToStart();
         });
@@ -433,6 +480,12 @@ class Game {
         this.removeBackToStartButton();
     }
 
+    removeRecordScreen() {
+        console.log('removeRecordScreen()');
+        this.removeRecordBoard();
+        this.removeBackToStartButton();
+    }
+
     removeMatchScreen() {
         console.log('removeMatchScreen()');
         this.removeScore();
@@ -455,6 +508,13 @@ class Game {
     createHowToScreen() {
         console.log('createHowToScreen()');
         GameView.createHowToPlayExplanation();
+        this.createBackToStartButton(true);
+    }
+
+    createRecordScreen() {
+        console.log('createRecordScreen()');
+        // TODO put scores as parameter
+        GameView.createRecordBoard(this.scores);
         this.createBackToStartButton(true);
     }
 
@@ -506,6 +566,11 @@ class Game {
     removeHowToPlayExplanation() {
         console.log('removeHowToPlayExplanation()');
         View.remove(ID_HOWTOPAGE);
+    }
+
+    removeRecordBoard() {
+        console.log('removeRecordBoard()');
+        View.remove(ID_RECORDPAGE);
     }
 
     removeAllMenuOnAfterDefeatedScreen() {
@@ -560,6 +625,13 @@ class Game {
         setTimeout(function() {
             game.controller.downKeyWork = true;
         }, ms);
+    }
+
+    updateScore() {
+        let score = this.match.score;
+        this.scores.push(score);
+        this.scores.sort(function(a, b){return b-a});
+        this.scores.pop();
     }
 }
 
@@ -951,6 +1023,11 @@ class View {
         return elm;
     }
 
+    static addClass(id, className) {
+        let elm = document.getElementById(id);
+        elm.classList.add(className);
+    }
+
     static remove(id) {
         let elm = document.getElementById(id);
         if (elm !== null) {
@@ -1052,6 +1129,42 @@ class GameView extends View {
         parentElm.appendChild(explanationShootElm);
         parentElm.appendChild(explanationMoveElm);
         parentElm.appendChild(explanationPauseElm);
+
+        document.getElementById(ID_CONTAINER).appendChild(parentElm);
+    }
+
+    static createRecordBoard(scores) {
+        console.log('createRecordBoard()');
+        let parentElm = document.createElement("div");
+        parentElm.id = ID_RECORDPAGE;
+        parentElm.className = ID_RECORDPAGE;
+
+        let titleElm = document.createElement("div");
+        super.setInnerHtml(titleElm, 'Record');
+
+        let recordBoard = document.createElement("div");
+        recordBoard.className = 'recordBoard';
+        let ulElm = document.createElement("ul");
+        let liElm01 = document.createElement("li");
+        super.setInnerHtml(liElm01, '1st: ' + scores[0]);
+        let liElm02 = document.createElement("li");
+        super.setInnerHtml(liElm02, '2nd: ' + scores[1]);
+        let liElm03 = document.createElement("li");
+        super.setInnerHtml(liElm03, '3rd: ' + scores[2]);
+        let liElm04 = document.createElement("li");
+        super.setInnerHtml(liElm04, '4th: ' + scores[3]);
+        let liElm05 = document.createElement("li");
+        super.setInnerHtml(liElm05, '5th: ' + scores[4]);
+        
+        ulElm.appendChild(liElm01);
+        ulElm.appendChild(liElm02);
+        ulElm.appendChild(liElm03);
+        ulElm.appendChild(liElm04);
+        ulElm.appendChild(liElm05);
+        recordBoard.appendChild(ulElm);
+
+        parentElm.appendChild(titleElm);
+        parentElm.appendChild(recordBoard);
 
         document.getElementById(ID_CONTAINER).appendChild(parentElm);
     }
