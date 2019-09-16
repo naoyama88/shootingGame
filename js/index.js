@@ -219,7 +219,10 @@ class Game {
                         );
                     } else {
                         this.startMenu[i - 1].focus = true;
-                        View.addClass(this.startMenu[i - 1].id, CLASS_MENUFOCUS);
+                        View.addClass(
+                            this.startMenu[i - 1].id,
+                            CLASS_MENUFOCUS
+                        );
                     }
                     break;
                 }
@@ -236,7 +239,10 @@ class Game {
                     View.removeClass(this.startMenu[i].id, CLASS_MENUFOCUS);
                     if (i + 1 < this.startMenu.length) {
                         this.startMenu[i + 1].focus = true;
-                        View.addClass(this.startMenu[i + 1].id, CLASS_MENUFOCUS);
+                        View.addClass(
+                            this.startMenu[i + 1].id,
+                            CLASS_MENUFOCUS
+                        );
                     } else {
                         this.startMenu[0].focus = true;
                         View.addClass(this.startMenu[0].id, CLASS_MENUFOCUS);
@@ -272,7 +278,6 @@ class Game {
             this.controller.enter = false;
             this.removeHowToScreen();
             this.createStartScreen();
-
 
             this.backToStart();
         }
@@ -363,9 +368,16 @@ class Game {
     }
 
     createHowToButton(isFocused) {
-        let elm = View.createElementInContainer(ID_HOWTOPLAYBUTTON, ID_HOWTOPLAYBUTTON);
+        let elm = View.createElementInContainer(
+            ID_HOWTOPLAYBUTTON,
+            ID_HOWTOPLAYBUTTON
+        );
         View.setInnerHtmlById(ID_HOWTOPLAYBUTTON, "How To Play");
-        View.addEventListenerToElm(ID_HOWTOPLAYBUTTON, "click", openHowToPlayScreen);
+        View.addEventListenerToElm(
+            ID_HOWTOPLAYBUTTON,
+            "click",
+            openHowToPlayScreen
+        );
         if (isFocused) {
             View.addClass(ID_HOWTOPLAYBUTTON, CLASS_MENUFOCUS);
         }
@@ -478,13 +490,15 @@ class Game {
     }
 
     removeHowToPlayExplanation() {
-        console.log('game.removeHowToPlayExplanation()');
+        console.log("game.removeHowToPlayExplanation()");
         View.setHidden(elmHowTo);
     }
 
     removeAllMenuOnAfterDefeatedScreen() {
         for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
-            if (document.getElementById(this.afterDefeatedMenu[i].id) !== null) {
+            if (
+                document.getElementById(this.afterDefeatedMenu[i].id) !== null
+            ) {
                 View.remove(this.afterDefeatedMenu[i].id);
             }
         }
