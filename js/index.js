@@ -49,11 +49,11 @@ class Game {
 
         this.scores = new Array();
         // TODO add real score instead of sample
-        this.scores.push(23000);
-        this.scores.push(22000);
-        this.scores.push(21000);
-        this.scores.push(20000);
-        this.scores.push(19000);
+        this.scores.push(2300);
+        this.scores.push(2200);
+        this.scores.push(2100);
+        this.scores.push(2000);
+        this.scores.push(1900);
     }
 
     start() {
