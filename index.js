@@ -689,6 +689,7 @@ class Match {
     createdLastLaserAt;
     paused;
     lastFreqyency;
+    deletedEnemies;
     constructor() {
         const SCREEN_LEFT = 20;
         const SCREEN_RIGHT = 480;
@@ -709,6 +710,7 @@ class Match {
         this.createdLastLaserAt = 0;
         this.paused = false;
         this.lastFreqyency = 0;
+        this.deletedEnemies = new Array();
     }
 
     showScore() {
@@ -761,7 +763,11 @@ class Match {
         // }
 
         if (Util.getRandom(interval) === 0) {
-            let enemy = new Pawn("enemy" + Util.getRandom(10000000));
+            let id = "enemy" + Util.getRandom(10000000000000);
+            if (this.enemies.indexOf(id) !== -1) {
+                id = "enemy" + Util.getRandom(10000000000000);
+            }
+            let enemy = new Pawn(id);
             this.pushEnemy(enemy);
             View.createElementInContainer(enemy.id, "enemy");
         }
@@ -807,10 +813,12 @@ class Match {
             if (!this.ended && intersects(this.hero, enemy)) {
                 game.gameOver();
             } else if (enemy.y + enemy.h >= this.bottom + 40) {
-                View.remove(enemy.id);
-                this.enemies.splice(i, 1);
-                i--;
-                continue;
+                if (this.deletedEnemies.indexOf(enemy.id) === -1) {
+                    View.remove(enemy.id);
+                    this.enemies.splice(i, 1);
+                    i--;
+                    continue;
+                }
             }
 
             for (let y = 0; y < this.lasers.length; y++) {
@@ -822,13 +830,17 @@ class Match {
                     continue;
                 }
                 if (!this.ended && intersects(laser, enemy)) {
-                    View.remove(enemy.id);
-                    this.enemies.splice(i, 1);
-                    i--;
-                    game.match.score += BASIC_SCORE_POINT;
-                    View.remove(laser.id);
-                    this.lasers.splice(y, 1);
-                    y--;
+                    console.log("collision enemy = " + enemy.id);
+                    if (this.deletedEnemies.indexOf(enemy.id) === -1) {
+                        this.deletedEnemies.push(enemy.id);
+                        this.enemies.splice(i, 1);
+                        View.remove(enemy.id);
+                        i--;
+                        game.match.score += BASIC_SCORE_POINT;
+                        View.remove(laser.id);
+                        this.lasers.splice(y, 1);
+                        y--;
+                    }
                 }
             }
         }
@@ -1053,8 +1065,9 @@ class View {
     static remove(id) {
         let elm = document.getElementById(id);
         if (elm !== null) {
-            console.log("remove id = " + id);
             elm.remove();
+        } else {
+            console.log("remove id " + id + " is missing");
         }
     }
 

@@ -1,3 +1,145 @@
+/**
+///////////////////////////////////////////////////
+start reset css
+///////////////////////////////////////////////////
+**/
+
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol,
+ul {
+    list-style: none;
+}
+blockquote,
+q {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/**
+///////////////////////////////////////////////////
+end reset css
+///////////////////////////////////////////////////
+**/
+
 :root {
     --background-color: #ffffff;
     --game-size-width: 500px;
@@ -17,7 +159,7 @@ body * {
 }
 
 .background {
-    background: url("../img/background_01.jpg") no-repeat center;
+    background: url("./img/background_01.jpg") no-repeat center;
     background-size: cover;
     width: 500px;
     height: 1000px;
@@ -67,7 +209,7 @@ body * {
 }
 
 .startButton:hover {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
+    cursor: url("./img/pointer_01.png") 24 24, pointer;
 }
 
 .howToButton {
@@ -87,7 +229,7 @@ body * {
 }
 
 .howToButton:hover {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
+    cursor: url("./img/pointer_01.png") 24 24, pointer;
 }
 
 .recordButton {
@@ -107,7 +249,7 @@ body * {
 }
 
 .recordButton:hover {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
+    cursor: url("./img/pointer_01.png") 24 24, pointer;
 }
 
 .menuFocus:before {
@@ -121,7 +263,7 @@ body * {
 }
 
 .hero {
-    background: url("../img/hero_01.png") no-repeat center;
+    background: url("./img/hero_01.png") no-repeat center;
     background-size: cover;
     width: 20px;
     height: 20px;
@@ -129,7 +271,7 @@ body * {
 }
 
 .laser {
-    background: url("../img/laser_01.png") no-repeat center;
+    background: url("./img/laser_01.png") no-repeat center;
     background-size: cover;
     width: 9px;
     height: 25px;
@@ -137,7 +279,7 @@ body * {
 }
 
 .enemy {
-    background: url("../img/enemy_01.png") no-repeat center;
+    background: url("./img/enemy_01.png") no-repeat center;
     background-size: cover;
     width: 35px;
     height: 35px;
@@ -375,7 +517,7 @@ body * {
 }
 
 .playAgain:hover {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
+    cursor: url("./img/pointer_01.png") 24 24, pointer;
 }
 
 .playAgain:focus {
@@ -398,7 +540,7 @@ body * {
 }
 
 .backToStart:hover {
-    cursor: url("../img/pointer_01.png") 24 24, pointer;
+    cursor: url("./img/pointer_01.png") 24 24, pointer;
 }
 
 .backToStart:focus {
