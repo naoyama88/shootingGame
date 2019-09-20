@@ -407,7 +407,7 @@ class Game {
         console.log('createStartButton()');
         View.createElementInContainer(ID_STARTBUTTON, ID_STARTBUTTON);
         View.setInnerHtmlById(ID_STARTBUTTON, "Start");
-        View.addEventListenerToElm(ID_STARTBUTTON, "click", function() {
+        View.addEventListenerToElm(ID_STARTBUTTON, "click", function () {
             game.startMatch();
         });
         if (isFocused) {
@@ -419,7 +419,7 @@ class Game {
         console.log('createHowToButton()');
         View.createElementInContainer(ID_HOWTOPLAYBUTTON, ID_HOWTOPLAYBUTTON);
         View.setInnerHtmlById(ID_HOWTOPLAYBUTTON, "How To Play");
-        View.addEventListenerToElm(ID_HOWTOPLAYBUTTON, "click", function() {
+        View.addEventListenerToElm(ID_HOWTOPLAYBUTTON, "click", function () {
             game.moveToHowToPlayScreen();
         });
 
@@ -432,7 +432,7 @@ class Game {
         console.log('createRecordButton()');
         View.createElementInContainer(ID_RECORDBUTTON, ID_RECORDBUTTON);
         View.setInnerHtmlById(ID_RECORDBUTTON, "Record");
-        View.addEventListenerToElm(ID_RECORDBUTTON, "click", function() {
+        View.addEventListenerToElm(ID_RECORDBUTTON, "click", function () {
             game.moveToRecordScreen();
         });
 
@@ -447,7 +447,7 @@ class Game {
         if (isFocused) {
             View.addClass(ID_BACKTOSTART, CLASS_MENUFOCUS);
         }
-        View.addEventListenerToElm(ID_BACKTOSTART, "click", function() {
+        View.addEventListenerToElm(ID_BACKTOSTART, "click", function () {
             game.backToStart();
         });
         View.setInnerHtmlById(ID_BACKTOSTART, "Back To Start");
@@ -458,7 +458,7 @@ class Game {
         View.createElementInContainer(ID_PLAYAGAIN, ID_PLAYAGAIN);
         View.setInnerHtmlById(ID_PLAYAGAIN, "Play Again");
         View.addClass(ID_PLAYAGAIN, CLASS_MENUFOCUS);
-        View.addEventListenerToElm(ID_PLAYAGAIN, "click", function() {
+        View.addEventListenerToElm(ID_PLAYAGAIN, "click", function () {
             game.playAgain();
         });
     }
@@ -598,7 +598,7 @@ class Game {
     disableShiftKey(ms = 100) {
         console.log('disableShiftKey()');
         this.controller.shiftKeyWork = false;
-        setTimeout(function() {
+        setTimeout(function () {
             game.controller.shiftKeyWork = true;
         }, ms);
     }
@@ -606,7 +606,7 @@ class Game {
     disableEnterKey(ms = 100) {
         console.log('disableEnterKey()');
         this.controller.enterKeyWork = false;
-        setTimeout(function() {
+        setTimeout(function () {
             game.controller.enterKeyWork = true;
         }, ms);
     }
@@ -614,7 +614,7 @@ class Game {
     disableUpKey(ms = 100) {
         console.log('disableUpKey()');
         this.controller.upKeyWork = false;
-        setTimeout(function() {
+        setTimeout(function () {
             game.controller.upKeyWork = true;
         }, ms);
     }
@@ -622,7 +622,7 @@ class Game {
     disableDownKey(ms = 100) {
         console.log('disableDownKey()');
         this.controller.downKeyWork = false;
-        setTimeout(function() {
+        setTimeout(function () {
             game.controller.downKeyWork = true;
         }, ms);
     }
@@ -630,7 +630,7 @@ class Game {
     updateScore() {
         let score = this.match.score;
         this.scores.push(score);
-        this.scores.sort(function(a, b){return b-a});
+        this.scores.sort(function (a, b) { return b - a });
         this.scores.pop();
     }
 }
@@ -986,17 +986,17 @@ let intersects = (a, b) => {
     );
 };
 
-document.onkeydown = function(e) {
+document.onkeydown = function (e) {
     game.controller.toggleKey(e.keyCode, true);
 };
 
-document.onkeyup = function(e) {
+document.onkeyup = function (e) {
     game.controller.toggleKey(e.keyCode, false);
 };
 
 class View {
 
-    constructor() {}
+    constructor() { }
 
     static setPosition(id, x, y) {
         let elm = document.getElementById(id);
@@ -1073,7 +1073,7 @@ class View {
 
 class GameView extends View {
 
-    constructor() {}
+    constructor() { }
 
     static createGameoverLogo() {
         console.log('createGameoverLogo()');
@@ -1155,7 +1155,7 @@ class GameView extends View {
         super.setInnerHtml(liElm04, '4th: ' + scores[3]);
         let liElm05 = document.createElement("li");
         super.setInnerHtml(liElm05, '5th: ' + scores[4]);
-        
+
         ulElm.appendChild(liElm01);
         ulElm.appendChild(liElm02);
         ulElm.appendChild(liElm03);
@@ -1179,7 +1179,7 @@ class Util {
 t = setLoop();
 
 function setLoop() {
-    return setInterval(function() {
+    return setInterval(function () {
         game.loop();
     }, 20);
 }
