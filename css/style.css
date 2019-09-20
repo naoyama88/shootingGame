@@ -33,7 +33,7 @@ body * {
     background: -webkit-linear-gradient(#eee, #333);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* font-family: 'Faster One', cursive; */
+    font-family: 'Faster One', cursive;
     font-size: 80px;
     position: absolute;
     left: 70px;
