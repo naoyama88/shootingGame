@@ -29,34 +29,9 @@ const BASIC_SCORE_POINT = 100;
 // for event loop setInterval
 let t;
 
-document.cookie = 'test=test';
-
 class Util {
     static getRandom(maxSize) {
         return parseInt(Math.random() * maxSize);
-    }
-
-    static setCookie(cname, cvalue, exdays = 7) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        console.log(document.cookie);
-    }
-
-    static getCookie(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
     }
 }
 
@@ -83,12 +58,12 @@ class Game {
         this.afterDefeatedMenu.push(backToStartBtn);
 
         this.scores = new Array();
-        if (Util.getCookie("rank1" !== "")) {
-            this.scores.push(Util.getCookie("rank1"));
-            this.scores.push(Util.getCookie("rank2"));
-            this.scores.push(Util.getCookie("rank3"));
-            this.scores.push(Util.getCookie("rank4"));
-            this.scores.push(Util.getCookie("rank5"));
+        if (localStorage.getItem("rank1")) {
+            this.scores.push(localStorage.getItem("rank1"));
+            this.scores.push(localStorage.getItem("rank2"));
+            this.scores.push(localStorage.getItem("rank3"));
+            this.scores.push(localStorage.getItem("rank4"));
+            this.scores.push(localStorage.getItem("rank5"));
         } else {
             this.scores.push(2300);
             this.scores.push(2200);
@@ -664,7 +639,7 @@ class Game {
             this.scores.pop();
             for (let i = 0; i < this.scores.length; i++) {
                 console.log("rank" + (i + 1), this.scores[i]);
-                Util.setCookie("rank" + (i + 1), this.scores[i]);
+                localStorage.setItem("rank" + (i + 1), this.scores[i]);
             }
         }
 
