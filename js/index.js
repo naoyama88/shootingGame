@@ -1,11 +1,15 @@
 "use strict";
 
 const ID_CONTAINER = "container";
+const ID_FIELD = "field";
 const ID_BACKGROUND = "background";
 const ID_HERO = "hero";
 const ID_SCORE = "score";
 const ID_PAUSE = "pause";
 const ID_GAMEOVER = "gameover";
+const ID_RANKIN = "rankin";
+const CLASS_NEWRECORD = "newRecord";
+const ID_RANK = "rank";
 const ID_HOWTOPAGE = "howToPage";
 const ID_RECORDPAGE = "recordPage";
 
@@ -330,7 +334,7 @@ class Game {
         if (!this.match.ended) {
             this.match.ended = true;
 
-            this.updateScore();
+            let index = this.updateScore();
 
             // remove
             this.removeHero();
@@ -338,6 +342,9 @@ class Game {
             this.createGameOverLogo();
             this.createPlayAgainButton();
             this.createBackToStartButton();
+            if (-1 < index && index < 3) {
+                this.createRankInTitle(index + 1, this.match.score);
+            }
         }
     }
 
@@ -347,6 +354,7 @@ class Game {
         this.removeAllEnemies();
         this.removeAllLasers();
         this.removeGameOverLogo();
+        this.removeRankIn();
         this.removeAllMenuOnAfterDefeatedScreen();
         // create
         this.match = new Match();
@@ -497,6 +505,7 @@ class Game {
     removeGameOverScreen() {
         console.log('removeGameOverScreen()');;
         this.removeGameOverLogo();
+        this.removeRankIn();
         this.removeAllMenuOnAfterDefeatedScreen();
     }
 
@@ -558,9 +567,20 @@ class Game {
         GameView.createGameoverLogo();
     }
 
+    createRankInTitle(rank, score) {
+        console.log("createRankInTitle()");
+        GameView.createRankInTitle(rank, score);
+    }
+
     removeGameOverLogo() {
         console.log('removeGameOverLogo()');
         View.remove(ID_GAMEOVER);
+    }
+
+    removeRankIn() {
+        console.log("removeRankIn()");
+        View.remove(ID_RANKIN);
+        View.remove(ID_RANK);
     }
 
     removeHowToPlayExplanation() {
@@ -629,9 +649,20 @@ class Game {
 
     updateScore() {
         let score = this.match.score;
-        this.scores.push(score);
-        this.scores.sort(function (a, b) { return b - a });
-        this.scores.pop();
+        let checkSmaller = (oldScore) => {
+            return oldScore <= score;
+        }
+        let index = this.scores.findIndex(checkSmaller);
+        if (-1 < index && index < 3) {
+            // rank in
+            this.scores.push(score);
+            this.scores.sort(function(a, b) {
+                return b - a;
+            });
+            this.scores.pop();
+        }
+
+        return index;
     }
 }
 
@@ -676,6 +707,7 @@ class Match {
     laserLevel;
     createdLastLaserAt;
     paused;
+    lastFreqyency;
     constructor() {
         const SCREEN_LEFT = 20;
         const SCREEN_RIGHT = 480;
@@ -695,6 +727,7 @@ class Match {
         this.laserLevel = 1;
         this.createdLastLaserAt = 0;
         this.paused = false;
+        this.lastFreqyency = 0;
     }
 
     showScore() {
@@ -1013,6 +1046,16 @@ class View {
         elm.innerHTML = content;
     }
 
+    static createElementInField(id, className) {
+        console.log("create id = " + id);
+        let elm = document.createElement("div");
+        elm.id = id;
+        elm.className = className;
+        document.getElementById(ID_FIELD).appendChild(elm);
+
+        return elm;
+    }
+
     static createElementInContainer(id, className) {
         console.log('create id = ' + id);
         let elm = document.createElement("div");
@@ -1083,6 +1126,26 @@ class GameView extends View {
         super.setInnerHtml(elm, 'GAME OVER');
 
         document.getElementById(ID_CONTAINER).appendChild(elm);
+    }
+
+    static createRankInTitle(rank, score) {
+        console.log("createRankInTitle()");
+        let rankinElm = document.createElement("div");
+        rankinElm.id = ID_RANKIN;
+        let rankElm = document.createElement("div");
+        rankElm.id = ID_RANK;
+        rankElm.className = ID_RANK;
+        if (rank === 1) {
+            super.setInnerHtml(rankinElm, "NEW RECORD!");
+            rankinElm.className = CLASS_NEWRECORD;
+        } else {
+            super.setInnerHtml(rankinElm, "RANK IN");
+            rankinElm.className = ID_RANKIN;
+        }
+        super.setInnerHtml(rankElm, "Rank" + rank + " : " + score);
+
+        document.getElementById(ID_CONTAINER).appendChild(rankinElm);
+        document.getElementById(ID_CONTAINER).appendChild(rankElm);
     }
 
     static createPauseText() {
