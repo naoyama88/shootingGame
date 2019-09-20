@@ -61,7 +61,6 @@ class Game {
     }
 
     start() {
-        console.log('start()');
         View.createElementInContainer(ID_BACKGROUND, ID_BACKGROUND);
         this.loop();
     }
@@ -392,7 +391,6 @@ class Game {
     }
 
     createStartScreen() {
-        console.log('createStartScreen()');
         // logo
         this.createStartLogo();
         // start button
@@ -406,13 +404,11 @@ class Game {
     }
 
     createStartLogo() {
-        console.log('createStartLogo()');
         View.createElementInContainer(ID_LOGO, ID_LOGO);
         View.setInnerHtmlById(ID_LOGO, "Space War");
     }
 
     createStartButton(isFocused) {
-        console.log('createStartButton()');
         View.createElementInContainer(ID_STARTBUTTON, ID_STARTBUTTON);
         View.setInnerHtmlById(ID_STARTBUTTON, "Start");
         View.addEventListenerToElm(ID_STARTBUTTON, "click", function () {
@@ -424,7 +420,6 @@ class Game {
     }
 
     createHowToButton(isFocused) {
-        console.log('createHowToButton()');
         View.createElementInContainer(ID_HOWTOPLAYBUTTON, ID_HOWTOPLAYBUTTON);
         View.setInnerHtmlById(ID_HOWTOPLAYBUTTON, "How To Play");
         View.addEventListenerToElm(ID_HOWTOPLAYBUTTON, "click", function () {
@@ -437,7 +432,6 @@ class Game {
     }
 
     createRecordButton(isFocused) {
-        console.log('createRecordButton()');
         View.createElementInContainer(ID_RECORDBUTTON, ID_RECORDBUTTON);
         View.setInnerHtmlById(ID_RECORDBUTTON, "Record");
         View.addEventListenerToElm(ID_RECORDBUTTON, "click", function () {
@@ -450,7 +444,6 @@ class Game {
     }
 
     createBackToStartButton(isFocused) {
-        console.log('createBackToStartButton()');
         View.createElementInContainer(ID_BACKTOSTART, ID_BACKTOSTART);
         if (isFocused) {
             View.addClass(ID_BACKTOSTART, CLASS_MENUFOCUS);
@@ -462,7 +455,6 @@ class Game {
     }
 
     createPlayAgainButton() {
-        console.log('createPlayAgainButton()');
         View.createElementInContainer(ID_PLAYAGAIN, ID_PLAYAGAIN);
         View.setInnerHtmlById(ID_PLAYAGAIN, "Play Again");
         View.addClass(ID_PLAYAGAIN, CLASS_MENUFOCUS);
@@ -472,30 +464,25 @@ class Game {
     }
 
     removeBackToStartButton() {
-        console.log('removeBackToStartButton()');
         View.remove(ID_BACKTOSTART);
     }
 
     removeStartScreen() {
-        console.log('removeStartScreen()');
         this.removeStartLogo();
         this.removeAllStartMenu();
     }
 
     removeHowToScreen() {
-        console.log('removeHowToScreen()');
         this.removeHowToPlayExplanation();
         this.removeBackToStartButton();
     }
 
     removeRecordScreen() {
-        console.log('removeRecordScreen()');
         this.removeRecordBoard();
         this.removeBackToStartButton();
     }
 
     removeMatchScreen() {
-        console.log('removeMatchScreen()');
         this.removeScore();
         this.removeAllEnemies();
         this.removeAllLasers();
@@ -503,37 +490,31 @@ class Game {
     }
 
     removeGameOverScreen() {
-        console.log('removeGameOverScreen()');;
         this.removeGameOverLogo();
         this.removeRankIn();
         this.removeAllMenuOnAfterDefeatedScreen();
     }
 
     removeHero() {
-        console.log('removeHero()');
         View.remove(ID_HERO);
     }
 
     createHowToScreen() {
-        console.log('createHowToScreen()');
         GameView.createHowToPlayExplanation();
         this.createBackToStartButton(true);
     }
 
     createRecordScreen() {
-        console.log('createRecordScreen()');
         // TODO put scores as parameter
         GameView.createRecordBoard(this.scores);
         this.createBackToStartButton(true);
     }
 
     removeScore() {
-        console.log('removeScore()');
         View.remove(ID_SCORE);
     }
 
     removeAllEnemies() {
-        console.log('removeAllEnemies()');
         if (this.match !== null) {
             for (let i = 0; i < this.match.enemies.length; i++) {
                 View.remove(this.match.enemies[i].id);
@@ -542,7 +523,6 @@ class Game {
     }
 
     removeAllLasers() {
-        console.log('removeAllLasers()');
         if (this.match !== null) {
             for (let i = 0; i < this.match.lasers.length; i++) {
                 View.remove(this.match.lasers[i].id);
@@ -551,72 +531,59 @@ class Game {
     }
 
     removeStartLogo() {
-        console.log('removeStartLogo()');
         View.remove(ID_LOGO);
     }
 
     removeAllStartMenu() {
-        console.log('removeAllStartMenu()');
         for (let i = 0; i < this.startMenu.length; i++) {
             View.remove(this.startMenu[i].id);
         }
     }
 
     createGameOverLogo() {
-        console.log('createGameOverLogo()');
         GameView.createGameoverLogo();
     }
 
     createRankInTitle(rank, score) {
-        console.log("createRankInTitle()");
         GameView.createRankInTitle(rank, score);
     }
 
     removeGameOverLogo() {
-        console.log('removeGameOverLogo()');
         View.remove(ID_GAMEOVER);
     }
 
     removeRankIn() {
-        console.log("removeRankIn()");
         View.remove(ID_RANKIN);
         View.remove(ID_RANK);
     }
 
     removeHowToPlayExplanation() {
-        console.log('removeHowToPlayExplanation()');
         View.remove(ID_HOWTOPAGE);
     }
 
     removeRecordBoard() {
-        console.log('removeRecordBoard()');
         View.remove(ID_RECORDPAGE);
     }
 
     removeAllMenuOnAfterDefeatedScreen() {
-        console.log('removeAllMenuOnAfterDefeatedScreen()');
         for (let i = 0; i < this.afterDefeatedMenu.length; i++) {
             View.remove(this.afterDefeatedMenu[i].id);
         }
     }
 
     createScore() {
-        console.log('createScore()');
         View.createElementInContainer(ID_SCORE, ID_SCORE);
     }
 
     createHero() {
-        console.log('createHero()');
         View.createElementInContainer(ID_HERO, ID_HERO);
     }
 
     initHero() {
-        console.log('initHero()');
         View.createElementInContainer(ID_HERO, ID_HERO);
     }
 
     disableShiftKey(ms = 100) {
-        console.log('disableShiftKey()');
         this.controller.shiftKeyWork = false;
         setTimeout(function () {
             game.controller.shiftKeyWork = true;
@@ -624,7 +591,6 @@ class Game {
     }
 
     disableEnterKey(ms = 100) {
-        console.log('disableEnterKey()');
         this.controller.enterKeyWork = false;
         setTimeout(function () {
             game.controller.enterKeyWork = true;
@@ -632,7 +598,6 @@ class Game {
     }
 
     disableUpKey(ms = 100) {
-        console.log('disableUpKey()');
         this.controller.upKeyWork = false;
         setTimeout(function () {
             game.controller.upKeyWork = true;
@@ -640,7 +605,6 @@ class Game {
     }
 
     disableDownKey(ms = 100) {
-        console.log('disableDownKey()');
         this.controller.downKeyWork = false;
         setTimeout(function () {
             game.controller.downKeyWork = true;
@@ -1047,7 +1011,6 @@ class View {
     }
 
     static createElementInField(id, className) {
-        console.log("create id = " + id);
         let elm = document.createElement("div");
         elm.id = id;
         elm.className = className;
@@ -1057,7 +1020,6 @@ class View {
     }
 
     static createElementInContainer(id, className) {
-        console.log('create id = ' + id);
         let elm = document.createElement("div");
         elm.id = id;
         elm.className = className;
@@ -1074,7 +1036,7 @@ class View {
     static remove(id) {
         let elm = document.getElementById(id);
         if (elm !== null) {
-            console.log("remove id = " + id);
+            console.log(id);
             elm.remove();
         }
     }
@@ -1119,7 +1081,6 @@ class GameView extends View {
     constructor() { }
 
     static createGameoverLogo() {
-        console.log('createGameoverLogo()');
         let elm = document.createElement("div");
         elm.id = ID_GAMEOVER;
         elm.className = ID_GAMEOVER;
@@ -1129,7 +1090,6 @@ class GameView extends View {
     }
 
     static createRankInTitle(rank, score) {
-        console.log("createRankInTitle()");
         let rankinElm = document.createElement("div");
         rankinElm.id = ID_RANKIN;
         let rankElm = document.createElement("div");
@@ -1149,7 +1109,6 @@ class GameView extends View {
     }
 
     static createPauseText() {
-        console.log('createPauseText()');
         let elm = document.createElement("div");
         elm.id = ID_PAUSE;
         elm.className = ID_PAUSE;
@@ -1159,7 +1118,6 @@ class GameView extends View {
     }
 
     static createHowToPlayExplanation() {
-        console.log('createHowToPlayExplanation()');
         let parentElm = document.createElement("div");
         parentElm.id = ID_HOWTOPAGE;
         parentElm.className = ID_HOWTOPAGE;
@@ -1197,7 +1155,6 @@ class GameView extends View {
     }
 
     static createRecordBoard(scores) {
-        console.log('createRecordBoard()');
         let parentElm = document.createElement("div");
         parentElm.id = ID_RECORDPAGE;
         parentElm.className = ID_RECORDPAGE;
