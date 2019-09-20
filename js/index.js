@@ -29,6 +29,37 @@ const BASIC_SCORE_POINT = 100;
 // for event loop setInterval
 let t;
 
+document.cookie = 'test=test';
+
+class Util {
+    static getRandom(maxSize) {
+        return parseInt(Math.random() * maxSize);
+    }
+
+    static setCookie(cname, cvalue, exdays = 7) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        console.log(document.cookie);
+    }
+
+    static getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+}
+
 class Game {
     controller;
     match;
@@ -52,12 +83,19 @@ class Game {
         this.afterDefeatedMenu.push(backToStartBtn);
 
         this.scores = new Array();
-        // TODO add real score instead of sample
-        this.scores.push(2300);
-        this.scores.push(2200);
-        this.scores.push(2100);
-        this.scores.push(2000);
-        this.scores.push(1900);
+        if (Util.getCookie("rank1" !== "")) {
+            this.scores.push(Util.getCookie("rank1"));
+            this.scores.push(Util.getCookie("rank2"));
+            this.scores.push(Util.getCookie("rank3"));
+            this.scores.push(Util.getCookie("rank4"));
+            this.scores.push(Util.getCookie("rank5"));
+        } else {
+            this.scores.push(2300);
+            this.scores.push(2200);
+            this.scores.push(2100);
+            this.scores.push(2000);
+            this.scores.push(1900);
+        }
     }
 
     start() {
@@ -620,10 +658,14 @@ class Game {
         if (-1 < index && index < 3) {
             // rank in
             this.scores.push(score);
-            this.scores.sort(function(a, b) {
+            this.scores.sort(function (a, b) {
                 return b - a;
             });
             this.scores.pop();
+            for (let i = 0; i < this.scores.length; i++) {
+                console.log("rank" + (i + 1), this.scores[i]);
+                Util.setCookie("rank" + (i + 1), this.scores[i]);
+            }
         }
 
         return index;
@@ -1036,7 +1078,7 @@ class View {
     static remove(id) {
         let elm = document.getElementById(id);
         if (elm !== null) {
-            console.log(id);
+            console.log("remove id = " + id);
             elm.remove();
         }
     }
@@ -1187,12 +1229,6 @@ class GameView extends View {
         parentElm.appendChild(recordBoard);
 
         document.getElementById(ID_CONTAINER).appendChild(parentElm);
-    }
-}
-
-class Util {
-    static getRandom(maxSize) {
-        return parseInt(Math.random() * maxSize);
     }
 }
 
