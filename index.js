@@ -35,12 +35,7 @@ class Util {
     }
 }
 
-class Game {
-    controller;
-    match;
-    startMenu;
-    afterDefeatedMenu;
-    scores;
+class GameController {
     constructor(controller) {
         this.controller = controller;
         this.match = null;
@@ -648,8 +643,6 @@ class Game {
 }
 
 class StartMenuButton {
-    id;
-    focus;
     constructor(id, bool) {
         this.id = id;
         if (bool !== null) {
@@ -661,8 +654,6 @@ class StartMenuButton {
 }
 
 class AfterDefeatedMenuButton {
-    id;
-    focus;
     constructor(id, bool) {
         this.id = id;
         if (bool !== null) {
@@ -674,22 +665,6 @@ class AfterDefeatedMenuButton {
 }
 
 class Match {
-    lastLoopRun;
-    iterations;
-    ended;
-    score;
-    left;
-    top;
-    right;
-    bottom;
-    enemies;
-    lasers;
-    hero;
-    laserLevel;
-    createdLastLaserAt;
-    paused;
-    lastFreqyency;
-    deletedEnemies;
     constructor() {
         const SCREEN_LEFT = 20;
         const SCREEN_RIGHT = 480;
@@ -861,23 +836,6 @@ class Match {
 }
 
 class Controller {
-    leftKey;
-    rightKey;
-    upKey;
-    downKey;
-    spaceKey;
-    enterKey;
-    left;
-    right;
-    up;
-    down;
-    space;
-    enter;
-    shift;
-    shiftKeyWork;
-    enterKeyWork;
-    upKeyWork;
-    downKeyWork;
     constructor() {
         const LEFT_KEY = 37;
         const UP_KEY = 38;
@@ -942,11 +900,6 @@ class Controller {
 }
 
 class Sprite {
-    id;
-    x;
-    y;
-    w;
-    h;
     constructor(id, x, y, w, h) {
         this.id = id;
         this.x = x;
@@ -1004,7 +957,7 @@ class NormalLaser extends Laser {
 }
 
 let controller = new Controller();
-let game = new Game(controller);
+let game = new GameController(controller);
 
 let intersects = (a, b) => {
     return (
