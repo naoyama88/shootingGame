@@ -1,7 +1,5 @@
 "use strict";
 
-import {Sprite, Laser} from './js/module_sprite.js';
-
 const ID_CONTAINER = "container";
 const ID_FIELD = "field";
 const ID_BACKGROUND = "background";
@@ -119,10 +117,9 @@ class GameController {
         this.createHowToScreen();
     }
 
-    // this function is run by setInterval
     loop() {
         const time = new Date().getTime();
-        if (!this.matchStarted()) {
+        if (this.match === null) {
             // not started game yet
             if (!View.exist(ID_LOGO) && !View.exist(ID_HOWTOPAGE) && !View.exist(ID_RECORDPAGE)) {
                 this.createStartScreen();
@@ -153,10 +150,6 @@ class GameController {
 
             this.match.createdLastLaserAt++;
         }
-    }
-
-    matchStarted() {
-        return this.match !== null;
     }
 
     handleControls() {
@@ -844,16 +837,20 @@ class Match {
 
 class Controller {
     constructor() {
-        // these key code is fron this
-        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode#Value_of_keyCode
-        this.leftKey = 37;
-        this.upKey = 38;
-        this.rightKey = 39;
-        this.downKey = 40;
-        this.spaceKey = 32;
-        this.enterKey = 13;
-        this.shiftKey = 16;
-
+        const LEFT_KEY = 37;
+        const UP_KEY = 38;
+        const RIGHT_KEY = 39;
+        const DOWN_KEY = 40;
+        const SPACE_KEY = 32;
+        const ENTER_KEY = 13;
+        const SHIFT_KEY = 16;
+        this.leftKey = LEFT_KEY;
+        this.upKey = UP_KEY;
+        this.rightKey = RIGHT_KEY;
+        this.downKey = DOWN_KEY;
+        this.spaceKey = SPACE_KEY;
+        this.enterKey = ENTER_KEY;
+        this.shiftKey = SHIFT_KEY;
         this.left = false;
         this.right = false;
         this.up = false;
@@ -902,6 +899,16 @@ class Controller {
     }
 }
 
+class Sprite {
+    constructor(id, x, y, w, h) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+}
+
 class Hero extends Sprite {
     constructor(x, bottom) {
         const W = 20;
@@ -928,6 +935,12 @@ class Pawn extends Enemy {
             ENEMY_SIZE_X,
             ENEMY_SIZE_Y
         );
+    }
+}
+
+class Laser extends Sprite {
+    constructor(id, x, y, w, h) {
+        super(id, x, y, w, h);
     }
 }
 
